@@ -1,4 +1,4 @@
-PartTimeMate👨‍💻 기획서
+PartTimeMate👨‍💻 기획서  
 📌 프로젝트 개요
 
 프로젝트 명: AussiePartTime
