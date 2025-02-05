@@ -1,99 +1,91 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+PartTimeMate👨‍💻 기획서
+📌 프로젝트 개요
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+프로젝트 명: AussiePartTime
+목적:
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+* 호주 내 파트타임·캐주얼 잡에 특화된 구인·구직 플랫폼 구축
+* 기존 풀타임 중심 플랫폼(예: SEEK, Indeed)과 달리, 학생, 워홀러, 유학생, 소규모 자영업체 등 단기 취업 수요층의 니즈 충족
 
-## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+🎯 목표
 
-## Project setup
+* 단기(MVP) 목표:
+    * 공고 등록, 검색, 지원 등 기본 구인·구직 기능 구현
+    * 다국어 지원 기능 도입 (react-i18next 활용)
+    * 모바일 웹 최적화 및 직관적인 UI 제공
+* 중장기 목표:
+    * 실시간 “급구” 기능, 커뮤니티 등 추가 기능 확장
+    * 프리미엄 광고 및 기업용 구인 패키지 등 수익 모델 도입
+    * 사용자 피드백 기반 지속 개선
 
-```bash
-$ yarn install
-```
 
-## Compile and run the project
+🚀 주요 기능
 
-```bash
-# development
-$ yarn run start
+* 구인·구직 기능:
+    * 공고 등록, 목록 검색, 상세 조회 및 지원
+* 검색 및 필터:
+    * 지역, 업종, 급여 등 세부 필터 적용
+* 다국어 지원:
+    * 호주의 다인종 환경에 맞춰 사용자가 선택한 언어(영어, 한국어 등)를 실시간으로 적용
+* 사용자 알림:
+    * 신규 공고 및 지원 상태 업데이트 알림
 
-# watch mode
-$ yarn run start:dev
 
-# production mode
-$ yarn run start:prod
-```
+🛠 기술 스택
 
-## Run tests
+* 프론트엔드:
+    * 프레임워크: React.js + TypeScript
+    * 스타일링: Tailwind CSS
+    * 라우팅: react-router-dom
+    * 다국어 지원: react-i18next
+    * API 통신: Axios (또는 Fetch API)
+* 백엔드:
+    * 프레임워크: NestJS (TypeScript 기반)
+    * 데이터베이스: MySQL
+    * 기능: API 서버 구현, 인증/보안, 실시간 알림 등
 
-```bash
-# unit tests
-$ yarn run test
 
-# e2e tests
-$ yarn run test:e2e
+👥 팀 구성 및 역할
 
-# test coverage
-$ yarn run test:cov
-```
+* 프론트엔드 개발자 (나):
+    * 전체 UI/UX 설계 및 구현
+    * 다국어 지원, 반응형 웹, 라우팅, API 연동 등 담당
+* 백엔드 개발자 (동료):
+    * NestJS 기반 API 서버 구현
+    * 데이터베이스 설계 및 관리, 인증/보안, 서버 인프라 담당
 
-## Deployment
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+🗺 개발 로드맵
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+1. 프로젝트 셋업 및 기본 아키텍처 구축:
 
-```bash
-$ yarn install -g mau
-$ mau deploy
-```
+    * 프론트엔드: React 프로젝트 초기화, Tailwind CSS, 라우팅, i18next 설정
+    * 백엔드: NestJS 프로젝트 생성, API 구조 설계, 데이터베이스 연결
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+1. 핵심 기능 개발 (MVP):
 
-## Resources
+    * 공고 등록, 검색, 지원 기능 구현
+    * 다국어 지원 적용 및 기본 UI/UX 완성
 
-Check out a few resources that may come in handy when working with NestJS:
+1. 통합 및 테스트:
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+    * 프론트엔드와 백엔드 연동, 기능별 테스트 진행
+    * 사용자 피드백 수집 및 개선 작업
 
-## Support
+1. 기능 확장 및 배포 준비:
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+    * 실시간 “급구”, 커뮤니티 등 추가 기능 개발
+    * CI/CD 구축 및 클라우드 배포
 
-## Stay in touch
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+💡 비즈니스 모델 및 리스크 관리
 
-## License
+* 비즈니스 모델:
+    * 기본 구인·구직 기능 무료 제공
+    * 프리미엄 상위 노출 광고, 긴급 채용 옵션, 기업용 구인 패키지 도입
+* 리스크 관리:
+    * 제한된 인력 내 핵심 MVP 기능에 집중
+    * 사용자 피드백을 통한 빠른 개선 및 기능 확장
+    * 데이터 보안 및 서버 안정성 확보
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
