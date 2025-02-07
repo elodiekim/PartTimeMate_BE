@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { setupSwagger } from './utils/setupSwagger';
 
 async function bootstrap() {
 
@@ -24,6 +25,8 @@ async function bootstrap() {
     allowedHeaders: '*',
     optionsSuccessStatus: 200,
   });
+
+  setupSwagger(app);
 
   await app.listen(PORT);
   logger.log(`Server running on ${await app.getUrl()}`);

@@ -38,6 +38,7 @@ export class User {
   @IsDate()
   @DeleteDateColumn({
     select: false,
+    type: 'timestamp',
   })
   deletedAt: Date;
 

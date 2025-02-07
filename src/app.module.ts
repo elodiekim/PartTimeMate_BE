@@ -6,6 +6,7 @@ import { configValidationSchema } from './utils/configValidationSchema';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmModuleOptions } from './utils/typeOrmModuleOptions';
 import { UsersModule } from './apis/users/users.module';
+import { AuthModule } from './apis/auth/auth.module';
 import * as path from 'path';
 @Module({
   imports: [  ConfigModule.forRoot({
@@ -14,7 +15,7 @@ import * as path from 'path';
     // envFilePath: `${__dirname}/../.env.${process.env.NODE_ENV}`,
     envFilePath: path.join(__dirname, '../.env.' + (process.env.NODE_ENV || 'local')),  // 절대 경로 사용
 
-  }) ,TypeOrmModule.forRootAsync(typeOrmModuleOptions), UsersModule],
+  }) ,TypeOrmModule.forRootAsync(typeOrmModuleOptions), UsersModule, AuthModule],
   
   controllers: [AppController],
   providers: [AppService],
