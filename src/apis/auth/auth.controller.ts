@@ -11,6 +11,7 @@ import { AuthService } from './auth.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
 import {
+  ApiBody,
   ApiCreatedResponse,
   ApiOperation,
   ApiResponse,
@@ -56,12 +57,74 @@ export class AuthController {
   signUp(@Body() createAuthDto: CreateAuthDto) {
     return this.authService.signUp(createAuthDto);
   }
+
   @Post('login')
+  @ApiOperation({
+    summary: 'Login API',
+    description:
+      'This API is used for user login to obtain an access token and refresh token.',
+  })
+  @ApiBody({
+    description: 'Login credentials (email and password)',
+    type: LoginAuthDto,
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Login successful',
+    schema: {
+      example: {
+        accessToken: 'your-access-token',
+        refreshToken: 'your-refresh-token',
+        message: 'Login successful',
+        statusCode: 200,
+      },
+    },
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Invalid credentials',
+    schema: {
+      example: {
+        message: 'Invalid credentials',
+        statusCode: 401,
+      },
+    },
+  })
   async login(@Body() loginAuthDto: LoginAuthDto) {
     return this.authService.login(loginAuthDto);
   }
 
   @Post('refresh-token')
+  @ApiOperation({
+    summary: 'Refresh Token API',
+    description:
+      'This API is used to refresh the access token using the refresh token.',
+  })
+  @ApiBody({
+    description: 'Refresh token to get a new access token',
+    type: RefreshTokenDto,
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Access token refreshed successfully',
+    schema: {
+      example: {
+        accessToken: 'new-access-token',
+        message: 'Access token refreshed',
+        statusCode: 200,
+      },
+    },
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Invalid or expired refresh token',
+    schema: {
+      example: {
+        message: 'Invalid refresh token',
+        statusCode: 401,
+      },
+    },
+  })
   async refreshToken(@Body() refreshTokenDto: RefreshTokenDto) {
     const { refreshToken } = refreshTokenDto;
     return this.authService.refreshToken(refreshToken);

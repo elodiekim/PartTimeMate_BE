@@ -12,7 +12,8 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from '../auth/jwt/jwt.guard';
-
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+@ApiTags('Users API')
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
@@ -21,6 +22,11 @@ export class UsersController {
   // async create(@Body() createUserDto: CreateUserDto) {
   //   return this.usersService.create(createUserDto);
   // }
+  @ApiOperation({
+    summary: 'test',
+    description: 'Try to log-in with token',
+  })
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Get()
   findAll() {
