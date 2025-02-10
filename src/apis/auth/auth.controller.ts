@@ -16,8 +16,10 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { LoginAuthDto } from './dto/login-auth.dto';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
 
-@ApiTags('Sign Up & Sign In API')
+@ApiTags('Auth API')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -54,12 +56,16 @@ export class AuthController {
   signUp(@Body() createAuthDto: CreateAuthDto) {
     return this.authService.signUp(createAuthDto);
   }
-
-  @Get()
-  findAll() {
-    return this.authService.findAll();
+  @Post('login')
+  async login(@Body() loginAuthDto: LoginAuthDto) {
+    return this.authService.login(loginAuthDto);
   }
 
+  @Post('refresh-token')
+  async refreshToken(@Body() refreshTokenDto: RefreshTokenDto) {
+    const { refreshToken } = refreshTokenDto;
+    return this.authService.refreshToken(refreshToken);
+  }
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.authService.findOne(+id);

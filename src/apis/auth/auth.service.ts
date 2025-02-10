@@ -1,12 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
 import * as bcrypt from 'bcryptjs';
 import { UsersService } from '../users/users.service';
-
+import { LoginAuthDto } from './dto/login-auth.dto';
+import { JwtService } from '@nestjs/jwt';
 @Injectable()
 export class AuthService {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly jwtService: JwtService,
+  ) {}
+
   /**
    * SIGN UP
    * @param createAuthDto
@@ -20,7 +25,6 @@ export class AuthService {
     } | null;
   }> {
     try {
-      // 이메일로 이미 존재하는 사용자가 있는지 체크
       const existingUser = await this.usersService.findByEmail(
         createAuthDto.email,
       );
@@ -56,8 +60,91 @@ export class AuthService {
       };
     }
   }
-  findAll() {
-    return `This action returns all auth`;
+
+  /**
+   * LOGIN
+   * @param loginAuthDto
+   */
+  async login(loginAuthDto: LoginAuthDto): Promise<{
+    accessToken: string;
+    refreshToken: string;
+    message: string;
+    statusCode: number;
+  }> {
+    const { email, password } = loginAuthDto;
+
+    // 이메일로 사용자 찾기
+    const user = await this.usersService.findByEmail(email);
+    if (!user) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    // 비밀번호 비교
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    // AccessToken 발급
+    const accessToken = this.generateAccessToken(user);
+    // RefreshToken 발급
+    const refreshToken = this.generateRefreshToken(user);
+    // DB에 Refresh Token 저장
+    const saveRefreshToken = await this.usersService.saveToken(
+      user.id,
+      refreshToken,
+    );
+
+    return {
+      message: 'Login successful',
+      statusCode: 200,
+      accessToken,
+      refreshToken,
+    };
+  }
+  async refreshToken(refreshToken: string): Promise<{
+    accessToken: string;
+    message: string;
+    statusCode: number;
+  }> {
+    try {
+      const decoded = this.jwtService.verify(refreshToken, {
+        secret: process.env.JWT_REFRESH_SECRET,
+      });
+
+      // DB에서 유저 조회
+      const user = await this.usersService.findByEmail(decoded.email);
+      console.log(user);
+      if (!user || user.refreshToken !== refreshToken) {
+        throw new UnauthorizedException('Invalid refresh token');
+      }
+
+      // 새로운 Access Token 발급
+      const accessToken = this.generateAccessToken(user);
+      return {
+        message: 'Access token refreshed',
+        statusCode: 200,
+        accessToken,
+      };
+    } catch (e) {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+  }
+
+  // Access Token 생성 함수
+  private generateAccessToken(user: any): string {
+    return this.jwtService.sign(
+      { id: user.id, email: user.email, type: 'access' },
+      { secret: process.env.JWT_SECRET, expiresIn: '15m' },
+    );
+  }
+
+  // Refresh Token 생성 함수
+  private generateRefreshToken(user: any): string {
+    return this.jwtService.sign(
+      { id: user.id, email: user.email, type: 'refresh' },
+      { secret: process.env.JWT_REFRESH_SECRET, expiresIn: '7d' },
+    );
   }
 
   findOne(id: number) {

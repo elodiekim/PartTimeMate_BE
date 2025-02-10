@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { CreateAuthDto } from '../auth/dto/create-auth.dto';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UsersService {
@@ -24,7 +25,6 @@ export class UsersService {
         password,
       } = createAuthDto;
 
-      // 사용자 정보 생성
       const user = this.userRepository.create({
         email,
         first_name,
@@ -40,17 +40,42 @@ export class UsersService {
     }
   }
 
-  // 이메일로 사용자 찾기
   async findByEmail(email: string) {
     try {
-      const user = await this.userRepository.findOne({ where: { email } });
-      return !!user;
+      // const user = await this.userRepository.findOne({ where: { email } });
+
+      const user = await this.userRepository.findOne({
+        where: { email },
+        select: [
+          'id',
+          'email',
+          'password',
+          'first_name',
+          'last_name',
+          'refreshToken',
+        ],
+      });
+      return user;
     } catch (e) {
       throw new Error(`Failed to find user by email: ${e.message}`);
     }
   }
+
+  async saveToken(userId: string, refreshToken: string) {
+    try {
+      const currentTime = new Date(); // 현재 시간
+
+      return this.userRepository.update(userId, {
+        refreshToken,
+        updated_at: currentTime, // updated_at 필드를 수동으로 설정
+      });
+    } catch (e) {
+      throw new Error(`Failed to save token: ${e.message}`);
+    }
+  }
+
   findAll() {
-    return `This action returns all users`;
+    return `Test`;
   }
 
   findOne(id: number) {
