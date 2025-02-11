@@ -1,6 +1,6 @@
 export enum USER_ROLE {
   JOB_SEEKER = 'JOB_SEEKER',
-  EMPLOYER = 'EMPLOYER',
+  BUSINESS = 'BUSINESS',
 }
 export enum LANGUAGE {
   ENG = 'ENG',

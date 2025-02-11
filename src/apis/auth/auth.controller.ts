@@ -82,10 +82,10 @@ export class AuthController {
   })
   @ApiResponse({
     status: 401,
-    description: 'Invalid credentials',
+    description: 'Please check your email or password',
     schema: {
       example: {
-        message: 'Invalid credentials',
+        message: 'Please check your email or password',
         statusCode: 401,
       },
     },

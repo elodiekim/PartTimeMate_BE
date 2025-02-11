@@ -72,7 +72,7 @@ export class AuthService {
     statusCode: number;
   }> {
     try {
-      const { email, password } = loginAuthDto;
+      const { email, password, role } = loginAuthDto;
 
       // 이메일로 사용자 찾기
       const user = await this.usersService.findByEmail(email);
@@ -84,6 +84,12 @@ export class AuthService {
       const isPasswordValid = await bcrypt.compare(password, user.password);
       if (!isPasswordValid) {
         throw new UnauthorizedException('Please check your email or password.');
+      }
+      //role 확인
+      if (user.role !== role) {
+        throw new UnauthorizedException(
+          'Invalid role. Please check your role.',
+        );
       }
 
       // AccessToken 발급
