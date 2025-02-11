@@ -71,37 +71,45 @@ export class AuthService {
     message: string;
     statusCode: number;
   }> {
-    const { email, password } = loginAuthDto;
+    try {
+      const { email, password } = loginAuthDto;
 
-    // 이메일로 사용자 찾기
-    const user = await this.usersService.findByEmail(email);
-    if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
+      // 이메일로 사용자 찾기
+      const user = await this.usersService.findByEmail(email);
+      if (!user) {
+        throw new UnauthorizedException('Please check your email or password.');
+      }
+
+      // 비밀번호 비교
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+      if (!isPasswordValid) {
+        throw new UnauthorizedException('Please check your email or password.');
+      }
+
+      // AccessToken 발급
+      const accessToken = this.generateAccessToken(user);
+      // RefreshToken 발급
+      const refreshToken = this.generateRefreshToken(user);
+      // DB에 Refresh Token 저장
+      const saveRefreshToken = await this.usersService.saveToken(
+        user.id,
+        refreshToken,
+      );
+
+      return {
+        message: 'Login successful',
+        statusCode: 200,
+        accessToken,
+        refreshToken,
+      };
+    } catch (e) {
+      if (e instanceof UnauthorizedException) {
+        throw e; // 이미 정의된 UnauthorizedException을 그대로 던지기
+      }
+      throw new UnauthorizedException('An error occurred during login.');
     }
-
-    // 비밀번호 비교
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      throw new UnauthorizedException('Invalid credentials');
-    }
-
-    // AccessToken 발급
-    const accessToken = this.generateAccessToken(user);
-    // RefreshToken 발급
-    const refreshToken = this.generateRefreshToken(user);
-    // DB에 Refresh Token 저장
-    const saveRefreshToken = await this.usersService.saveToken(
-      user.id,
-      refreshToken,
-    );
-
-    return {
-      message: 'Login successful',
-      statusCode: 200,
-      accessToken,
-      refreshToken,
-    };
   }
+
   async refreshToken(refreshToken: string): Promise<{
     accessToken: string;
     message: string;
