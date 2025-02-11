@@ -26,6 +26,7 @@ export class UsersController {
     summary: 'test',
     description: 'Try to log-in with token',
   })
+  // @ApiBearerAuth('accessToken')
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Get()

@@ -20,10 +20,10 @@ async function bootstrap() {
     }),
   );
   app.enableCors({
-    origin: ['http://localhost:5173'], // 허용할 도메인 명시
+    origin: ['http://localhost:5173', 'http://localhost:3000'], // 허용할 도메인 명시
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true, // 쿠키 및 인증 정보 포함 요청 허용
-    allowedHeaders: 'Content-Type, Authorization', // 특정 헤더만 허용
+    allowedHeaders: ['Content-Type, Authorization'], // 특정 헤더만 허용
     optionsSuccessStatus: 200,
   });
 

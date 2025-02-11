@@ -23,14 +23,23 @@ export const setupSwagger = (app: INestApplication): void => {
     .setTitle('PartTimeMate Test Server Docs')
     .setDescription('PartTimeMate Test API Server')
     .setVersion('0.0.1')
+    // .addBearerAuth(
+    //   {
+    //     type: 'http',
+    //     scheme: 'bearer',
+    //     name: 'jwt',
+    //     in: 'header',
+    //   },
+    //   'accessToken',
+    // )
     .addBearerAuth(
       {
         type: 'http',
         scheme: 'bearer',
-        name: 'jwt',
+        bearerFormat: 'JWT', // 추가
         in: 'header',
       },
-      'accessToken',
+      // 'accessToken',
     )
     .build();
   const document = SwaggerModule.createDocument(app, options);
