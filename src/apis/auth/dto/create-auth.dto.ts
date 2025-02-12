@@ -4,6 +4,8 @@ import {
   IsEmail,
   IsEnum,
   IsNotEmpty,
+  IsOptional,
+  IsPhoneNumber,
   IsString,
   Length,
   Matches,
@@ -78,4 +80,18 @@ export class CreateAuthDto {
   @IsNotEmpty()
   @Column({ type: 'enum', enum: LANGUAGE })
   preferred_language: string;
+
+  @ApiProperty({
+    example: '+821012345678',
+    description: 'User phone number (optional)',
+    required: false,
+  })
+  @IsOptional()
+  //   @IsPhoneNumber(undefined, { message: 'Invalid phone number format' }) // 국가 코드 자동 감지
+  //   @Matches(/^\+\d{1,3}[1-9]\d{3,13}$/, {
+  //     message:
+  //       'Invalid phone number format. Must start with + followed by country code and valid local number.',
+  //   })
+  //   @IsPhoneNumber(undefined, { message: 'Invalid phone number format.' })
+  phoneNumber?: string;
 }

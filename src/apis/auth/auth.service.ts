@@ -22,6 +22,7 @@ export class AuthService {
     data: {
       email: string;
       name: string;
+      phoneNumber?: string;
     } | null;
   }> {
     try {
@@ -50,6 +51,7 @@ export class AuthService {
         data: {
           email: newUser.email,
           name: `${newUser.first_name} ${newUser.last_name}`,
+          phoneNumber: newUser.phoneNumber,
         },
       };
     } catch (e) {
@@ -145,12 +147,12 @@ export class AuthService {
       throw new UnauthorizedException('Invalid refresh token');
     }
   }
-
+  /** 테스트용 15m ->12h 변경 */
   // Access Token 생성 함수
   private generateAccessToken(user: any): string {
     return this.jwtService.sign(
       { id: user.id, email: user.email, type: 'access' },
-      { secret: process.env.JWT_SECRET, expiresIn: '15m' },
+      { secret: process.env.JWT_SECRET, expiresIn: '12h' },
     );
   }
 

@@ -2,6 +2,8 @@ import {
   IsEmail,
   IsEnum,
   IsNotEmpty,
+  IsOptional,
+  IsPhoneNumber,
   IsString,
   Length,
   Matches,
@@ -45,4 +47,8 @@ export class CreateUserDto {
   @IsNotEmpty()
   @Column({ type: 'enum', enum: LANGUAGE })
   preferred_language: string;
+
+  @IsOptional()
+  //   @IsPhoneNumber(undefined, { message: 'Invalid phone number format' })
+  phoneNumber?: string;
 }

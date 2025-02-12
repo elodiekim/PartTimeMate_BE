@@ -9,7 +9,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from '../auth/jwt/jwt.guard';
 import {
@@ -29,6 +28,9 @@ export class UsersController {
   // async create(@Body() createUserDto: CreateUserDto) {
   //   return this.usersService.create(createUserDto);
   // }
+  // ─────────────────────────────────────────────────────────
+  // ✅ 현재 로그인한 유저 정보 조회 API
+  // ─────────────────────────────────────────────────────────
   @ApiOperation({
     summary: 'Get logged-in user info',
     description: 'Returns the information of the currently authenticated user.',
@@ -48,7 +50,9 @@ export class UsersController {
   async getMe(@GetUser() user: User) {
     return this.usersService.getMe(user);
   }
-
+  // ─────────────────────────────────────────────────────────
+  // ✅ 현재 로그인한 유저 정보 수정 API
+  // ─────────────────────────────────────────────────────────
   @ApiOperation({
     summary: 'Update logged-in user info',
     description:
@@ -74,11 +78,16 @@ export class UsersController {
     return this.usersService.updateMe(user, updateUserDto);
   }
 
+  // ─────────────────────────────────────────────────────────
+  // ✅ 특정 사용자 정보 수정 API (관리자용)
+  // ─────────────────────────────────────────────────────────
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(+id, updateUserDto);
   }
-
+  // ─────────────────────────────────────────────────────────
+  // ✅ 특정 사용자 삭제 API (관리자용)
+  // ─────────────────────────────────────────────────────────
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.usersService.remove(+id);

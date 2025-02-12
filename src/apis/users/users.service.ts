@@ -27,6 +27,7 @@ export class UsersService {
         role,
         preferred_language,
         password,
+        phoneNumber,
       } = createAuthDto;
 
       const user = this.userRepository.create({
@@ -36,6 +37,7 @@ export class UsersService {
         role,
         preferred_language,
         password,
+        phoneNumber,
       });
 
       return this.userRepository.save(user);
@@ -107,7 +109,7 @@ export class UsersService {
   }
 
   async updateMe(user: User, updateUserDto: UpdateUserDto): Promise<any> {
-    const { password, preferred_language } = updateUserDto;
+    const { password, preferred_language, phoneNumber } = updateUserDto;
 
     const existingUser = await this.findOne(user.id);
 
@@ -122,10 +124,14 @@ export class UsersService {
     if (preferred_language) {
       existingUser.preferred_language = preferred_language;
     }
-    if (!password && !preferred_language) {
+    if (!password && !preferred_language && !phoneNumber) {
       throw new BadRequestException(
         'At least one field (password or preferred_language) must be provided.',
       );
+    }
+
+    if (phoneNumber) {
+      existingUser.phoneNumber = phoneNumber;
     }
     const updatedUser = await this.userRepository.save(existingUser);
 

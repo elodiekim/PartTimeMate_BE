@@ -7,7 +7,7 @@ import {
   DeleteDateColumn,
 } from 'typeorm';
 
-import { IsDate } from 'class-validator';
+import { IsDate, IsPhoneNumber } from 'class-validator';
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn('uuid')
@@ -24,6 +24,9 @@ export class User {
 
   @Column({ type: 'varchar', length: 100 })
   last_name: string;
+
+  @Column({ type: 'varchar', length: 15, nullable: true })
+  phoneNumber?: string;
 
   @Column({ type: 'varchar', length: 50 })
   role: string;
