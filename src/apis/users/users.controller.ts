@@ -13,6 +13,8 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from '../auth/jwt/jwt.guard';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { User } from './entities/user.entity';
+import { GetUser } from '../decorators/get-user.decorator';
 @ApiTags('Users API')
 @Controller('users')
 export class UsersController {
@@ -23,20 +25,14 @@ export class UsersController {
   //   return this.usersService.create(createUserDto);
   // }
   @ApiOperation({
-    summary: 'test',
-    description: 'Try to log-in with token',
+    summary: 'Get logged-in user info',
+    description: 'Returns the information of the currently authenticated user.',
   })
-  // @ApiBearerAuth('accessToken')
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  @Get()
-  findAll() {
-    return this.usersService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
+  @Get('me')
+  async getMe(@GetUser() user: User) {
+    return this.usersService.getMe(user);
   }
 
   @Patch(':id')
