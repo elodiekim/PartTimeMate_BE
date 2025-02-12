@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -6,7 +10,7 @@ import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { CreateAuthDto } from '../auth/dto/create-auth.dto';
 import { JwtService } from '@nestjs/jwt';
-
+import * as bcrypt from 'bcryptjs';
 @Injectable()
 export class UsersService {
   constructor(
@@ -91,7 +95,7 @@ export class UsersService {
 
   async saveToken(userId: string, refreshToken: string) {
     try {
-      const currentTime = new Date(); // 현재 시간
+      const currentTime = new Date();
 
       return this.userRepository.update(userId, {
         refreshToken,
@@ -102,6 +106,35 @@ export class UsersService {
     }
   }
 
+  async updateMe(user: User, updateUserDto: UpdateUserDto): Promise<any> {
+    const { password, preferred_language } = updateUserDto;
+
+    const existingUser = await this.findOne(user.id);
+
+    if (!existingUser) {
+      throw new NotFoundException('User not found');
+    }
+    if (password) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      existingUser.password = hashedPassword;
+    }
+
+    if (preferred_language) {
+      existingUser.preferred_language = preferred_language;
+    }
+    if (!password && !preferred_language) {
+      throw new BadRequestException(
+        'At least one field (password or preferred_language) must be provided.',
+      );
+    }
+    const updatedUser = await this.userRepository.save(existingUser);
+
+    return {
+      message: 'User information successfully updated',
+      statusCode: 200,
+      // data: updatedUser,
+    };
+  }
   findAll() {
     return `Test`;
   }
