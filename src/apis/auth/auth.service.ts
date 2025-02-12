@@ -85,6 +85,7 @@ export class AuthService {
       if (!isPasswordValid) {
         throw new UnauthorizedException('Please check your email or password.');
       }
+
       //role 확인
       if (user.role !== role) {
         throw new UnauthorizedException(

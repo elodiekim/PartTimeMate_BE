@@ -52,6 +52,7 @@ export class UsersService {
           'password',
           'first_name',
           'last_name',
+          'role',
           'refreshToken',
         ],
       });
