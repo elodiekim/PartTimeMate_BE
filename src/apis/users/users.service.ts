@@ -109,30 +109,46 @@ export class UsersService {
   }
 
   async updateMe(user: User, updateUserDto: UpdateUserDto): Promise<any> {
-    const { password, preferred_language, phoneNumber } = updateUserDto;
+    const { password, preferred_language, phoneNumber, first_name, last_name } =
+      updateUserDto;
 
     const existingUser = await this.findOne(user.id);
 
     if (!existingUser) {
       throw new NotFoundException('User not found');
     }
+    let isUpdated = false;
+
     if (password) {
       const hashedPassword = await bcrypt.hash(password, 10);
       existingUser.password = hashedPassword;
+      isUpdated = true;
     }
 
     if (preferred_language) {
       existingUser.preferred_language = preferred_language;
-    }
-    if (!password && !preferred_language && !phoneNumber) {
-      throw new BadRequestException(
-        'At least one field (password or preferred_language) must be provided.',
-      );
+      isUpdated = true;
     }
 
     if (phoneNumber) {
       existingUser.phoneNumber = phoneNumber;
+      isUpdated = true;
     }
+
+    if (first_name) {
+      existingUser.first_name = first_name;
+      isUpdated = true;
+    }
+
+    if (last_name) {
+      existingUser.last_name = last_name;
+      isUpdated = true;
+    }
+
+    if (!isUpdated) {
+      throw new BadRequestException('At least one field must be provided.');
+    }
+
     const updatedUser = await this.userRepository.save(existingUser);
 
     return {
