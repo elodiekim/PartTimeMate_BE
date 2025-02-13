@@ -51,7 +51,7 @@ export class AuthService {
         statusCode: 201,
         data: {
           email: newUser.email,
-          name: `${newUser.first_name} ${newUser.last_name}`,
+          name: `${newUser.firstName} ${newUser.lastName}`,
           phoneNumber: newUser.phoneNumber,
         },
       };

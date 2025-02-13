@@ -20,10 +20,10 @@ export class User {
   password: string;
 
   @Column({ type: 'varchar', length: 100 })
-  first_name: string;
+  firstName: string;
 
   @Column({ type: 'varchar', length: 100 })
-  last_name: string;
+  lastName: string;
 
   @Column({ type: 'varchar', length: 15, nullable: true })
   phoneNumber?: string;
@@ -35,7 +35,7 @@ export class User {
   refreshToken: string;
 
   @Column({ type: 'varchar', length: 10, default: 'en' })
-  preferred_language: string;
+  preferredLanguage: string;
 
   @IsDate()
   @CreateDateColumn({
@@ -48,7 +48,7 @@ export class User {
   @UpdateDateColumn({
     type: 'timestamp',
   })
-  updated_at: Date;
+  updatedAt: Date;
 
   @IsDate()
   @DeleteDateColumn({

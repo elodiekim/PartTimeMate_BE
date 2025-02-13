@@ -31,12 +31,12 @@ export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
   @Length(1, 100) // 첫 이름 길이 제한
-  first_name: string;
+  firstName: string;
 
   @IsString()
   @IsNotEmpty()
   @Length(1, 100) // 성 길이 제한
-  last_name: string;
+  lastName: string;
 
   @IsEnum(USER_ROLE)
   @IsNotEmpty()

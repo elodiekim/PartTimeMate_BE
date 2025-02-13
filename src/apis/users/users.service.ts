@@ -22,20 +22,20 @@ export class UsersService {
     try {
       const {
         email,
-        first_name,
-        last_name,
+        firstName,
+        lastName,
         role,
-        preferred_language,
+        preferredLanguage,
         password,
         phoneNumber,
       } = createAuthDto;
 
       const user = this.userRepository.create({
         email,
-        first_name,
-        last_name,
+        firstName,
+        lastName,
         role,
-        preferred_language,
+        preferredLanguage,
         password,
         phoneNumber,
       });
@@ -51,11 +51,12 @@ export class UsersService {
       select: [
         'id',
         'email',
-        'first_name',
-        'last_name',
+        'firstName',
+        'lastName',
         'role',
-        'preferred_language',
+        'preferredLanguage',
         'createdAt',
+        'phoneNumber',
       ],
     });
     if (!user) {
@@ -83,8 +84,8 @@ export class UsersService {
           'id',
           'email',
           'password',
-          'first_name',
-          'last_name',
+          'firstName',
+          'lastName',
           'role',
           'refreshToken',
         ],
@@ -101,7 +102,7 @@ export class UsersService {
 
       return this.userRepository.update(userId, {
         refreshToken,
-        updated_at: currentTime, // updated_at 필드를 수동으로 설정
+        updatedAt: currentTime, // updated_at 필드를 수동으로 설정
       });
     } catch (e) {
       throw new Error(`Failed to save token: ${e.message}`);
@@ -122,8 +123,8 @@ export class UsersService {
       'password',
       'preferred_language',
       'phoneNumber',
-      'first_name',
-      'last_name',
+      'firstName',
+      'lastName',
     ];
 
     for (const field of fieldsToUpdate) {

@@ -50,7 +50,7 @@ export class CreateAuthDto {
   @IsString()
   @IsNotEmpty()
   @Length(1, 100)
-  first_name: string;
+  firstName: string;
 
   @ApiProperty({
     example: 'KIM',
@@ -59,7 +59,7 @@ export class CreateAuthDto {
   @IsString()
   @IsNotEmpty()
   @Length(1, 100)
-  last_name: string;
+  lastName: string;
 
   @ApiProperty({
     example: USER_ROLE.JOB_SEEKER,
@@ -79,7 +79,7 @@ export class CreateAuthDto {
   @IsEnum(LANGUAGE)
   @IsNotEmpty()
   @Column({ type: 'enum', enum: LANGUAGE })
-  preferred_language: string;
+  preferredLanguage: string;
 
   @ApiProperty({
     example: '+821012345678',

@@ -21,7 +21,7 @@ export class UpdateUserDto extends PartialType(
   @IsString()
   @IsOptional()
   @Length(1, 100)
-  first_name?: string;
+  firstName?: string;
 
   @ApiPropertyOptional({
     example: 'Doe',
@@ -30,7 +30,7 @@ export class UpdateUserDto extends PartialType(
   @IsString()
   @IsOptional()
   @Length(1, 100)
-  last_name?: string;
+  lastName?: string;
 
   @ApiPropertyOptional({
     example: 'newpassword123!',
@@ -55,7 +55,7 @@ export class UpdateUserDto extends PartialType(
   })
   @IsEnum(LANGUAGE)
   @IsOptional()
-  preferred_language?: LANGUAGE;
+  preferredLanguage?: LANGUAGE;
 
   @ApiPropertyOptional({
     example: '+821012341234',
