@@ -11,6 +11,7 @@ import { Repository } from 'typeorm';
 import { CreateAuthDto } from '../auth/dto/create-auth.dto';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
+import { SafeUser, UpdatedUserResponse } from './types/user-response.interface';
 @Injectable()
 export class UsersService {
   constructor(
@@ -109,32 +110,38 @@ export class UsersService {
     }
   }
 
-  async updateMe(user: User, updateUserDto: UpdateUserDto): Promise<any> {
+  async updateMe(
+    user: User,
+    updateUserDto: UpdateUserDto,
+  ): Promise<UpdatedUserResponse> {
     const existingUser = await this.findOne(user.id);
 
     if (!existingUser) {
       throw new NotFoundException('User not found');
     }
 
-    const updatableFields: Partial<User> = {};
-
     // 업데이트 가능한 필드 목록
     const fieldsToUpdate: (keyof UpdateUserDto)[] = [
       'password',
-      'preferred_language',
+      'preferredLanguage',
       'phoneNumber',
       'firstName',
       'lastName',
     ];
 
-    for (const field of fieldsToUpdate) {
-      if (updateUserDto[field]) {
-        updatableFields[field] =
-          field === 'password'
-            ? await bcrypt.hash(updateUserDto[field], 10)
-            : updateUserDto[field];
-      }
+    // updatableFields에 비밀번호만 해싱해서 추가
+    const updatableFields: Partial<User> = {};
+
+    if (updateUserDto.password) {
+      updatableFields.password = await bcrypt.hash(updateUserDto.password, 10);
     }
+
+    // 나머지 필드 업데이트
+    fieldsToUpdate.forEach((field) => {
+      if (field !== 'password' && updateUserDto[field] !== undefined) {
+        updatableFields[field] = updateUserDto[field];
+      }
+    });
 
     // 변경할 데이터가 하나도 없으면 에러 발생
     if (Object.keys(updatableFields).length === 0) {
@@ -143,13 +150,18 @@ export class UsersService {
 
     // 기존 사용자 정보 업데이트
     Object.assign(existingUser, updatableFields);
-    await this.userRepository.save(existingUser);
+    const updatedUser = await this.userRepository.save(existingUser);
+
+    // 민감한 정보 제외하고 응답 생성
+    const { password, refreshToken, role, ...safeUser } = updatedUser;
 
     return {
       message: 'User information successfully updated',
       statusCode: 200,
+      data: safeUser,
     };
   }
+
   findAll() {
     return `Test`;
   }
