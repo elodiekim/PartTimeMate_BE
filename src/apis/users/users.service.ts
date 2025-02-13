@@ -109,52 +109,44 @@ export class UsersService {
   }
 
   async updateMe(user: User, updateUserDto: UpdateUserDto): Promise<any> {
-    const { password, preferred_language, phoneNumber, first_name, last_name } =
-      updateUserDto;
-
     const existingUser = await this.findOne(user.id);
 
     if (!existingUser) {
       throw new NotFoundException('User not found');
     }
-    let isUpdated = false;
 
-    if (password) {
-      const hashedPassword = await bcrypt.hash(password, 10);
-      existingUser.password = hashedPassword;
-      isUpdated = true;
+    const updatableFields: Partial<User> = {};
+
+    // 업데이트 가능한 필드 목록
+    const fieldsToUpdate: (keyof UpdateUserDto)[] = [
+      'password',
+      'preferred_language',
+      'phoneNumber',
+      'first_name',
+      'last_name',
+    ];
+
+    for (const field of fieldsToUpdate) {
+      if (updateUserDto[field]) {
+        updatableFields[field] =
+          field === 'password'
+            ? await bcrypt.hash(updateUserDto[field], 10)
+            : updateUserDto[field];
+      }
     }
 
-    if (preferred_language) {
-      existingUser.preferred_language = preferred_language;
-      isUpdated = true;
-    }
-
-    if (phoneNumber) {
-      existingUser.phoneNumber = phoneNumber;
-      isUpdated = true;
-    }
-
-    if (first_name) {
-      existingUser.first_name = first_name;
-      isUpdated = true;
-    }
-
-    if (last_name) {
-      existingUser.last_name = last_name;
-      isUpdated = true;
-    }
-
-    if (!isUpdated) {
+    // 변경할 데이터가 하나도 없으면 에러 발생
+    if (Object.keys(updatableFields).length === 0) {
       throw new BadRequestException('At least one field must be provided.');
     }
 
-    const updatedUser = await this.userRepository.save(existingUser);
+    // 기존 사용자 정보 업데이트
+    Object.assign(existingUser, updatableFields);
+    await this.userRepository.save(existingUser);
 
     return {
       message: 'User information successfully updated',
       statusCode: 200,
-      // data: updatedUser,
     };
   }
   findAll() {
