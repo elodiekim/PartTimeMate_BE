@@ -5,6 +5,7 @@ import * as bcrypt from 'bcryptjs';
 import { UsersService } from '../users/users.service';
 import { LoginAuthDto } from './dto/login-auth.dto';
 import { JwtService } from '@nestjs/jwt';
+import { USER_ROLE } from 'src/utils/enums';
 @Injectable()
 export class AuthService {
   constructor(
@@ -87,14 +88,12 @@ export class AuthService {
       if (!isPasswordValid) {
         throw new UnauthorizedException('Please check your email or password.');
       }
-
-      //role 확인
-      if (user.role !== role) {
+      // role 체크 (단, ADMIN이면 검사 생략)
+      if (user.role !== USER_ROLE.ADMIN && user.role !== role) {
         throw new UnauthorizedException(
           'Invalid role. Please check your role.',
         );
       }
-
       // AccessToken 발급
       const accessToken = this.generateAccessToken(user);
       // RefreshToken 발급
