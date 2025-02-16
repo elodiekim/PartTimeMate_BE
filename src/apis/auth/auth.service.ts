@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
 import * as bcrypt from 'bcryptjs';
@@ -130,7 +134,7 @@ export class AuthService {
 
       // DB에서 유저 조회
       const user = await this.usersService.findByEmail(decoded.email);
-      console.log(user);
+
       if (!user || user.refreshToken !== refreshToken) {
         throw new UnauthorizedException('Invalid refresh token');
       }
@@ -163,15 +167,19 @@ export class AuthService {
     );
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
-
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
-
   remove(id: number) {
     return `This action removes a #${id} auth`;
+  }
+
+  async logout(user): Promise<{ message: string; statusCode: number }> {
+    try {
+      await this.usersService.clearRefreshToken(user.id); // 해당 유저의 refreshToken을 제거
+      return {
+        message: 'User logged out successfully',
+        statusCode: 200,
+      };
+    } catch (e) {
+      throw new InternalServerErrorException('Failed to logout user');
+    }
   }
 }

@@ -110,6 +110,12 @@ export class UsersService {
     }
   }
 
+  async clearRefreshToken(userId: string): Promise<void> {
+    await this.userRepository.update(userId, {
+      refreshToken: null as unknown as string, //typeorm에서의 타입 검사 문제를 우회
+    });
+  }
+
   async updateMe(
     user: User,
     updateUserDto: UpdateUserDto,

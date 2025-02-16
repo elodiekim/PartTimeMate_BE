@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
@@ -19,6 +20,9 @@ import {
 } from '@nestjs/swagger';
 import { LoginAuthDto } from './dto/login-auth.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { JwtAuthGuard } from './jwt/jwt.guard';
+import { GetUser } from '../decorators/get-user.decorator';
+import { User } from '../users/entities/user.entity';
 
 @ApiTags('Auth API')
 @Controller('auth')
@@ -129,18 +133,12 @@ export class AuthController {
     const { refreshToken } = refreshTokenDto;
     return this.authService.refreshToken(refreshToken);
   }
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.authService.findOne(+id);
-  }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAuthDto: UpdateAuthDto) {
-    return this.authService.update(+id, updateAuthDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.authService.remove(+id);
+  @Post('logout')
+  @UseGuards(JwtAuthGuard)
+  async logout(
+    @GetUser() user: User,
+  ): Promise<{ message: string; statusCode: number }> {
+    return this.authService.logout(user);
   }
 }

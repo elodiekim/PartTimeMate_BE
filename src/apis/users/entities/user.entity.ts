@@ -32,7 +32,7 @@ export class User {
   role: string;
 
   @Column({ nullable: true })
-  refreshToken: string;
+  refreshToken?: string;
 
   @Column({ type: 'varchar', length: 10, default: 'en' })
   preferredLanguage: string;
