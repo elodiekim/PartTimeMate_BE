@@ -9,10 +9,11 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
-import { LANGUAGE } from 'src/utils/enums';
+import { LANGUAGE, USER_ROLE } from 'src/utils/enums';
+import { Roles } from 'src/apis/decorators/roles.decorator';
 
 export class UpdateUserDto extends PartialType(
-  OmitType(CreateUserDto, ['email', 'role'] as const),
+  OmitType(CreateUserDto, ['email'] as const),
 ) {
   @ApiPropertyOptional({
     example: 'John',
@@ -64,4 +65,14 @@ export class UpdateUserDto extends PartialType(
   @IsString()
   @IsOptional()
   phoneNumber?: string;
+
+  @ApiPropertyOptional({
+    example: 'admin',
+    description:
+      'User role (either "JOB_SEEKER" or "BUSINESS"). Only for admins.',
+    enum: USER_ROLE,
+  })
+  @IsEnum(USER_ROLE)
+  @IsOptional()
+  role?: USER_ROLE;
 }

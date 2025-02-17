@@ -19,6 +19,8 @@ import {
 } from '@nestjs/swagger';
 import { User } from './entities/user.entity';
 import { GetUser } from '../decorators/get-user.decorator';
+import { RolesGuard } from '../auth/jwt/roles.guard';
+import { Roles } from '../decorators/roles.decorator';
 @ApiTags('Users API')
 @Controller('users')
 export class UsersController {
@@ -79,11 +81,35 @@ export class UsersController {
   }
 
   // ─────────────────────────────────────────────────────────
+  // ✅ 모든 사용자 정보 조회 API (관리자용)
+  //
+  // ─────────────────────────────────────────────────────────
   // ✅ 특정 사용자 정보 수정 API (관리자용)
   // ─────────────────────────────────────────────────────────
   @Patch(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard) // JWT 인증 + 관리자 권한 확인
+  @Roles('admin') // role이 'admin'인 경우만 허용
+  @ApiOperation({
+    summary: 'Update a user information (Admin only)', // API 설명
+    description:
+      'This endpoint allows admins to update user information, including their role.',
+  })
+  @ApiBearerAuth()
+  @ApiResponse({
+    status: 200,
+    description: 'User information successfully updated.',
+    type: User, // 응답 타입
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden. Only admins can update user information.',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'User not found.',
+  })
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
+    return this.usersService.update(id, updateUserDto);
   }
   // ─────────────────────────────────────────────────────────
   // ✅ 특정 사용자 삭제 API (관리자용)

@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -125,38 +126,15 @@ export class UsersService {
     if (!existingUser) {
       throw new NotFoundException('User not found');
     }
-
-    // 업데이트 가능한 필드 목록
-    const fieldsToUpdate: (keyof UpdateUserDto)[] = [
-      'password',
-      'preferredLanguage',
-      'phoneNumber',
-      'firstName',
-      'lastName',
-    ];
-
-    // updatableFields에 비밀번호만 해싱해서 추가
-    const updatableFields: Partial<User> = {};
-
-    if (updateUserDto.password) {
-      updatableFields.password = await bcrypt.hash(updateUserDto.password, 10);
+    // 자기 자신을 업데이트할 때는 role을 변경할 수 없도록 막기
+    if (updateUserDto.role) {
+      throw new ForbiddenException('You cannot change your own role');
     }
 
-    // 나머지 필드 업데이트
-    fieldsToUpdate.forEach((field) => {
-      if (field !== 'password' && updateUserDto[field] !== undefined) {
-        updatableFields[field] = updateUserDto[field];
-      }
-    });
-
-    // 변경할 데이터가 하나도 없으면 에러 발생
-    if (Object.keys(updatableFields).length === 0) {
-      throw new BadRequestException('At least one field must be provided.');
-    }
-
-    // 기존 사용자 정보 업데이트
-    Object.assign(existingUser, updatableFields);
-    const updatedUser = await this.userRepository.save(existingUser);
+    const updatedUser = await this.updateUserFields(
+      existingUser,
+      updateUserDto,
+    );
 
     // 민감한 정보 제외하고 응답 생성
     const { password, refreshToken, role, ...safeUser } = updatedUser;
@@ -168,12 +146,75 @@ export class UsersService {
     };
   }
 
-  findAll() {
-    return `Test`;
+  // ─────────────────────────────────────────────────────────
+  // ✅ 공통 업데이트 로직 (사용자 & 관리자)
+  // ─────────────────────────────────────────────────────────
+  private async updateUserFields(
+    user: User,
+    updateUserDto: UpdateUserDto,
+  ): Promise<User> {
+    // 업데이트 가능한 필드 목록
+    const fieldsToUpdate: (keyof UpdateUserDto)[] = [
+      'password',
+      'preferredLanguage',
+      'phoneNumber',
+      'firstName',
+      'lastName',
+      'role',
+    ];
+
+    const updatableFields: Partial<User> = {};
+
+    // 비밀번호는 해싱 후 저장
+    if (updateUserDto.password) {
+      updatableFields.password = await bcrypt.hash(updateUserDto.password, 10);
+    }
+
+    // 나머지 필드 업데이트
+    fieldsToUpdate.forEach((field) => {
+      if (field !== 'password' && updateUserDto[field] !== undefined) {
+        updatableFields[field] = updateUserDto[field];
+      }
+    });
+
+    if (Object.keys(updatableFields).length === 0) {
+      throw new BadRequestException('At least one field must be provided.');
+    }
+
+    // 기존 사용자 정보 업데이트
+    Object.assign(user, updatableFields);
+    return await this.userRepository.save(user);
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  // ─────────────────────────────────────────────────────────
+  // ✅ 특정 사용자 정보 업데이트 (관리자 전용)
+  // ─────────────────────────────────────────────────────────
+  async update(
+    userId: string,
+    updateUserDto: UpdateUserDto,
+  ): Promise<UpdatedUserResponse> {
+    const existingUser = await this.findOne(userId);
+
+    if (!existingUser) {
+      throw new NotFoundException('User not found');
+    }
+
+    const updatedUser = await this.updateUserFields(
+      existingUser,
+      updateUserDto,
+    );
+    // 민감한 정보 제외하고 응답 생성
+    const { password, refreshToken, ...safeUser } = updatedUser;
+
+    return {
+      message: `User with ID ${existingUser.email} successfully updated`,
+      statusCode: 200,
+      data: safeUser,
+    };
+  }
+
+  findAll() {
+    return `Test`;
   }
 
   remove(id: number) {

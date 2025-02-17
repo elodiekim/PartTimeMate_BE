@@ -31,7 +31,7 @@ export class AuthController {
 
   @Post('signup')
   @ApiOperation({
-    summary: 'SignUp API',
+    summary: 'Sign-up API',
     description: 'This is an API for user sign-up.',
   })
   @ApiCreatedResponse({
@@ -64,7 +64,7 @@ export class AuthController {
 
   @Post('login')
   @ApiOperation({
-    summary: 'Login API',
+    summary: 'Log-in API',
     description:
       'This API is used for user login to obtain an access token and refresh token.',
   })
@@ -136,6 +136,19 @@ export class AuthController {
 
   @Post('logout')
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Log-out API',
+    description: '현재 로그인한 사용자를 로그아웃합니다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'User logged out successfully',
+    schema: {
+      example: { message: 'User logged out successfully', statusCode: 200 },
+    },
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 500, description: 'Internal Server Error' })
   async logout(
     @GetUser() user: User,
   ): Promise<{ message: string; statusCode: number }> {

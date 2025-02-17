@@ -12,4 +12,7 @@ export class ReadAuthDto {
 
   @Expose()
   lastName: string;
+
+  @Expose()
+  role: string;
 }

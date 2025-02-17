@@ -92,6 +92,7 @@ export class AuthService {
       if (!isPasswordValid) {
         throw new UnauthorizedException('Please check your email or password.');
       }
+
       // role 체크 (단, ADMIN이면 검사 생략)
       if (user.role !== USER_ROLE.ADMIN && user.role !== role) {
         throw new UnauthorizedException(
@@ -118,6 +119,7 @@ export class AuthService {
       if (e instanceof UnauthorizedException) {
         throw e; // 이미 정의된 UnauthorizedException을 그대로 던지기
       }
+      console.log(e.message);
       throw new UnauthorizedException('An error occurred during login.');
     }
   }
@@ -154,7 +156,7 @@ export class AuthService {
   // Access Token 생성 함수
   private generateAccessToken(user: any): string {
     return this.jwtService.sign(
-      { id: user.id, email: user.email, type: 'access' },
+      { id: user.id, email: user.email, role: user.role, type: 'access' },
       { secret: process.env.JWT_SECRET, expiresIn: '12h' },
     );
   }
@@ -162,13 +164,9 @@ export class AuthService {
   // Refresh Token 생성 함수
   private generateRefreshToken(user: any): string {
     return this.jwtService.sign(
-      { id: user.id, email: user.email, type: 'refresh' },
+      { id: user.id, email: user.email, role: user.role, type: 'refresh' },
       { secret: process.env.JWT_REFRESH_SECRET, expiresIn: '7d' },
     );
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
   }
 
   async logout(user): Promise<{ message: string; statusCode: number }> {

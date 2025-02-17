@@ -31,7 +31,7 @@ export class User {
   @Column({ type: 'varchar', length: 50 })
   role: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'text', nullable: true })
   refreshToken?: string;
 
   @Column({ type: 'varchar', length: 10, default: 'en' })
