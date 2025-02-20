@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 
 import { IsDate, IsPhoneNumber } from 'class-validator';
+import { Exclude } from 'class-transformer';
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn('uuid')
@@ -15,7 +16,7 @@ export class User {
 
   @Column({ type: 'varchar', length: 255, unique: true })
   email: string;
-
+  @Exclude()
   @Column({ type: 'varchar', length: 255 })
   password: string;
 
@@ -30,7 +31,7 @@ export class User {
 
   @Column({ type: 'varchar', length: 50 })
   role: string;
-
+  @Exclude()
   @Column({ type: 'text', nullable: true })
   refreshToken?: string;
 

@@ -13,6 +13,9 @@ import { CreateAuthDto } from '../auth/dto/create-auth.dto';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import { SafeUser, UpdatedUserResponse } from './types/user-response.interface';
+import { PageRequestDto, ReadAllUsersDto } from './dto/read-all-users.dto';
+import { plainToClass, plainToInstance } from 'class-transformer';
+import { ReadUserDto } from './dto/read-user.dto';
 @Injectable()
 export class UsersService {
   constructor(
@@ -213,8 +216,25 @@ export class UsersService {
     };
   }
 
-  findAll() {
-    return `Test`;
+  async findAll(pageRequestDto: PageRequestDto): Promise<ReadAllUsersDto> {
+    const { page = 1 } = pageRequestDto;
+    const limit = 20;
+    const [users, totalCount] = await this.userRepository.findAndCount({
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+    const totalPage = Math.ceil(totalCount / limit);
+    return {
+      message: 'Successfully retrieved all users.',
+      statusCode: 200,
+      data: {
+        users,
+        totalCount,
+        totalPage,
+        page,
+        // limit,
+      },
+    };
   }
 
   remove(id: number) {

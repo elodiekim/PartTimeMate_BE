@@ -7,6 +7,9 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
+  UseInterceptors,
+  ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -21,8 +24,10 @@ import { User } from './entities/user.entity';
 import { GetUser } from '../decorators/get-user.decorator';
 import { RolesGuard } from '../auth/jwt/roles.guard';
 import { Roles } from '../decorators/roles.decorator';
+import { PageRequestDto, ReadAllUsersDto } from './dto/read-all-users.dto';
 @ApiTags('Users API')
 @Controller('users')
+@UseInterceptors(ClassSerializerInterceptor)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
@@ -79,10 +84,37 @@ export class UsersController {
   async updateMe(@GetUser() user: User, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.updateMe(user, updateUserDto);
   }
-
+  /** ToDo : ADMIN */
   // ─────────────────────────────────────────────────────────
   // ✅ 모든 사용자 정보 조회 API (관리자용)
-  //
+  // ─────────────────────────────────────────────────────────
+  @Get()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  @ApiOperation({
+    summary: 'Retrieve all users information (Admin only)',
+    description:
+      'This endpoint allows admins to retrieve all user information.',
+  })
+  @ApiBearerAuth()
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully retrieved all users.',
+    type: ReadAllUsersDto,
+  })
+  findAll(@Query() pageRequestDto: PageRequestDto): Promise<ReadAllUsersDto> {
+    return this.usersService.findAll(pageRequestDto);
+  }
+
+  // // ─────────────────────────────────────────────────────────
+  // // ✅ 특정 사용자 정보 조회 API (관리자용)
+  // // ─────────────────────────────────────────────────────────
+  // @Get(':id')
+  // @UseGuards(JwtAuthGuard, RolesGuard)
+  // @Roles('admin')
+  // findOne(@Param('id') id: string) {
+  //   return this.usersService.findOne(id);
+  // }
   // ─────────────────────────────────────────────────────────
   // ✅ 특정 사용자 정보 수정 API (관리자용)
   // ─────────────────────────────────────────────────────────
@@ -90,7 +122,7 @@ export class UsersController {
   @UseGuards(JwtAuthGuard, RolesGuard) // JWT 인증 + 관리자 권한 확인
   @Roles('admin') // role이 'admin'인 경우만 허용
   @ApiOperation({
-    summary: 'Update a user information (Admin only)', // API 설명
+    summary: 'Update a user information (Admin only)',
     description:
       'This endpoint allows admins to update user information, including their role.',
   })
