@@ -105,16 +105,15 @@ export class UsersController {
   findAll(@Query() pageRequestDto: PageRequestDto): Promise<ReadAllUsersDto> {
     return this.usersService.findAll(pageRequestDto);
   }
-
   // // ─────────────────────────────────────────────────────────
   // // ✅ 특정 사용자 정보 조회 API (관리자용)
   // // ─────────────────────────────────────────────────────────
-  // @Get(':id')
-  // @UseGuards(JwtAuthGuard, RolesGuard)
-  // @Roles('admin')
-  // findOne(@Param('id') id: string) {
-  //   return this.usersService.findOne(id);
-  // }
+  @Get('admin/:id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  findOne(@Param('id') id: string) {
+    return this.usersService.findOne(id);
+  }
   // ─────────────────────────────────────────────────────────
   // ✅ 특정 사용자 정보 수정 API (관리자용)
   // ─────────────────────────────────────────────────────────
