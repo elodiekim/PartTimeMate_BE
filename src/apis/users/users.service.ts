@@ -78,7 +78,16 @@ export class UsersService {
       data,
     };
   }
-
+  async deleteMyAccount(user: User): Promise<{
+    message: string;
+    statusCode: number;
+  }> {
+    await this.remove(user.id);
+    return {
+      message: 'User account successfully deleted.',
+      statusCode: 200,
+    };
+  }
   async findByEmail(email: string) {
     try {
       // const user = await this.userRepository.findOne({ where: { email } });
@@ -237,7 +246,21 @@ export class UsersService {
     };
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(userId: string): Promise<{
+    message: string;
+    statusCode: number;
+  }> {
+    const user = await this.findOne(userId);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    // 리프레시 토큰 제거
+    await this.userRepository.update(user.id, { refreshToken: null });
+    await this.userRepository.softRemove(user);
+
+    return {
+      message: 'User successfully soft deleted',
+      statusCode: 200,
+    };
   }
 }

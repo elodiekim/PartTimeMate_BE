@@ -35,6 +35,9 @@ export class UsersController {
   // async create(@Body() createUserDto: CreateUserDto) {
   //   return this.usersService.create(createUserDto);
   // }
+  /**ToDo
+   * ReadUserDto 사용하여 수정
+   * */
   // ─────────────────────────────────────────────────────────
   // ✅ 현재 로그인한 유저 정보 조회 API
   // ─────────────────────────────────────────────────────────
@@ -84,11 +87,33 @@ export class UsersController {
   async updateMe(@GetUser() user: User, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.updateMe(user, updateUserDto);
   }
+  // ─────────────────────────────────────────────────────────
+  // ✅ 회원 탈퇴 API
+  // ─────────────────────────────────────────────────────────
+  @ApiOperation({
+    summary: 'Delete own account',
+    description:
+      'Allows the currently authenticated user to delete their own account.',
+  })
+  @ApiBearerAuth()
+  @ApiResponse({
+    status: 200,
+    description: 'User account successfully deleted.',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized. Invalid or missing JWT token.',
+  })
+  @UseGuards(JwtAuthGuard)
+  @Delete('me')
+  async deleteMyAccount(@GetUser() user: User) {
+    return this.usersService.deleteMyAccount(user);
+  }
   /** ToDo : ADMIN */
   // ─────────────────────────────────────────────────────────
   // ✅ 모든 사용자 정보 조회 API (관리자용)
   // ─────────────────────────────────────────────────────────
-  @Get()
+  @Get('admin')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
   @ApiOperation({
@@ -108,8 +133,18 @@ export class UsersController {
   // // ─────────────────────────────────────────────────────────
   // // ✅ 특정 사용자 정보 조회 API (관리자용)
   // // ─────────────────────────────────────────────────────────
+  /**ToDo
+   * ReadUserDto 사용하여 수정
+   * */
   @Get('admin/:id')
   @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  @ApiOperation({
+    summary: 'Retrieve a user information (Admin only)',
+    description:
+      'This endpoint allows admins to retrieve specific user information.',
+  })
+  @ApiBearerAuth()
   @Roles('admin')
   findOne(@Param('id') id: string) {
     return this.usersService.findOne(id);
@@ -117,7 +152,7 @@ export class UsersController {
   // ─────────────────────────────────────────────────────────
   // ✅ 특정 사용자 정보 수정 API (관리자용)
   // ─────────────────────────────────────────────────────────
-  @Patch(':id')
+  @Patch('admin/:id')
   @UseGuards(JwtAuthGuard, RolesGuard) // JWT 인증 + 관리자 권한 확인
   @Roles('admin') // role이 'admin'인 경우만 허용
   @ApiOperation({
@@ -145,8 +180,30 @@ export class UsersController {
   // ─────────────────────────────────────────────────────────
   // ✅ 특정 사용자 삭제 API (관리자용)
   // ─────────────────────────────────────────────────────────
-  @Delete(':id')
+  /**ToDo
+   * 탈퇴한 회원 포함 조회 필요?
+   */
+  @Delete('admin/:id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  @ApiOperation({
+    summary: 'Soft delete a user (Admin only)',
+    description: 'Allows an admin to soft delete a user by their ID.',
+  })
+  @ApiBearerAuth()
+  @ApiResponse({
+    status: 200,
+    description: 'User successfully soft deleted.',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden. Only admins can delete users.',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'User not found.',
+  })
   remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+    return this.usersService.remove(id);
   }
 }

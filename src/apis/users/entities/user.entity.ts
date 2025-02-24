@@ -33,7 +33,7 @@ export class User {
   role: string;
   @Exclude()
   @Column({ type: 'text', nullable: true })
-  refreshToken?: string;
+  refreshToken?: string | null;
 
   @Column({ type: 'varchar', length: 10, default: 'en' })
   preferredLanguage: string;
