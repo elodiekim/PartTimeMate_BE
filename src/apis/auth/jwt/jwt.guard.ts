@@ -33,7 +33,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
             return false; // Refresh Token 처리
           }
         } catch (error) {
-          console.error('JWT verification error:', error.message);
+          //   console.error('JWT verification error:', error.message);
           return false; // 토큰이 유효하지 않으면 인증 실패 처리
         }
       }

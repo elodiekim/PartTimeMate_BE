@@ -4,18 +4,17 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
+
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { CreateAuthDto } from '../auth/dto/create-auth.dto';
-import { JwtService } from '@nestjs/jwt';
+
 import * as bcrypt from 'bcryptjs';
-import { SafeUser, UpdatedUserResponse } from './types/user-response.interface';
+import { UpdatedUserResponse } from './types/user-response.interface';
 import { PageRequestDto, ReadAllUsersDto } from './dto/read-all-users.dto';
-import { plainToClass, plainToInstance } from 'class-transformer';
-import { ReadUserDto } from './dto/read-user.dto';
+
 @Injectable()
 export class UsersService {
   constructor(
@@ -76,16 +75,6 @@ export class UsersService {
       message: 'User information successfully fetched',
       statusCode: 200,
       data,
-    };
-  }
-  async deleteMyAccount(user: User): Promise<{
-    message: string;
-    statusCode: number;
-  }> {
-    await this.remove(user.id);
-    return {
-      message: 'User account successfully deleted.',
-      statusCode: 200,
     };
   }
   async findByEmail(email: string) {

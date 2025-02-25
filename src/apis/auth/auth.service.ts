@@ -10,6 +10,7 @@ import { UsersService } from '../users/users.service';
 import { LoginAuthDto } from './dto/login-auth.dto';
 import { JwtService } from '@nestjs/jwt';
 import { USER_ROLE } from 'src/utils/enums';
+import { ConfirmPasswordDto } from './dto/confirm-password.dto';
 @Injectable()
 export class AuthService {
   constructor(
@@ -89,6 +90,7 @@ export class AuthService {
 
       // 비밀번호 비교
       const isPasswordValid = await bcrypt.compare(password, user.password);
+
       if (!isPasswordValid) {
         throw new UnauthorizedException('Please check your email or password.');
       }
@@ -179,5 +181,41 @@ export class AuthService {
     } catch (e) {
       throw new InternalServerErrorException('Failed to logout user');
     }
+  }
+  async confirmPassword(
+    userPassword: string,
+    confirmPasswordDto: ConfirmPasswordDto,
+  ): Promise<boolean> {
+    const isPasswordValid = await bcrypt.compare(
+      confirmPasswordDto.password, // 사용자가 입력한 비밀번호
+      userPassword, // 데이터베이스에 저장된 해시된 비밀번호
+    );
+
+    return isPasswordValid;
+  }
+  async deleteMyAccount(
+    user: { id: string; email: string },
+    confirmPasswordDto: ConfirmPasswordDto,
+  ): Promise<{
+    message: string;
+    statusCode: number;
+  }> {
+    const findMyAccount = await this.usersService.findByEmail(user.email);
+    if (findMyAccount) {
+      const password = findMyAccount!.password;
+      const passwordCheck = await this.confirmPassword(
+        password,
+        confirmPasswordDto,
+      );
+      if (!passwordCheck) {
+        throw new UnauthorizedException('Please check your password.');
+      }
+    }
+
+    await this.usersService.remove(user.id);
+    return {
+      message: 'User account successfully deleted.',
+      statusCode: 200,
+    };
   }
 }

@@ -12,6 +12,7 @@ import { AuthService } from './auth.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiCreatedResponse,
   ApiOperation,
@@ -23,6 +24,7 @@ import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { JwtAuthGuard } from './jwt/jwt.guard';
 import { GetUser } from '../decorators/get-user.decorator';
 import { User } from '../users/entities/user.entity';
+import { ConfirmPasswordDto } from './dto/confirm-password.dto';
 
 @ApiTags('Auth API')
 @Controller('auth')
@@ -153,5 +155,31 @@ export class AuthController {
     @GetUser() user: User,
   ): Promise<{ message: string; statusCode: number }> {
     return this.authService.logout(user);
+  }
+
+  // ─────────────────────────────────────────────────────────
+  // ✅ 회원 탈퇴 API
+  // ─────────────────────────────────────────────────────────
+  @ApiOperation({
+    summary: 'Delete own account',
+    description:
+      'Allows the currently authenticated user to delete their own account.',
+  })
+  @ApiBearerAuth()
+  @ApiResponse({
+    status: 200,
+    description: 'User account successfully deleted.',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized. Invalid or missing JWT token.',
+  })
+  @UseGuards(JwtAuthGuard)
+  @Delete()
+  async deleteMyAccount(
+    @GetUser() user: User,
+    @Body() confirmPasswordDto: ConfirmPasswordDto,
+  ) {
+    return this.authService.deleteMyAccount(user, confirmPasswordDto);
   }
 }

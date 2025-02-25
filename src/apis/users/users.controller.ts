@@ -25,6 +25,7 @@ import { GetUser } from '../decorators/get-user.decorator';
 import { RolesGuard } from '../auth/jwt/roles.guard';
 import { Roles } from '../decorators/roles.decorator';
 import { PageRequestDto, ReadAllUsersDto } from './dto/read-all-users.dto';
+
 @ApiTags('Users API')
 @Controller('users')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -87,28 +88,7 @@ export class UsersController {
   async updateMe(@GetUser() user: User, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.updateMe(user, updateUserDto);
   }
-  // ─────────────────────────────────────────────────────────
-  // ✅ 회원 탈퇴 API
-  // ─────────────────────────────────────────────────────────
-  @ApiOperation({
-    summary: 'Delete own account',
-    description:
-      'Allows the currently authenticated user to delete their own account.',
-  })
-  @ApiBearerAuth()
-  @ApiResponse({
-    status: 200,
-    description: 'User account successfully deleted.',
-  })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized. Invalid or missing JWT token.',
-  })
-  @UseGuards(JwtAuthGuard)
-  @Delete('me')
-  async deleteMyAccount(@GetUser() user: User) {
-    return this.usersService.deleteMyAccount(user);
-  }
+
   /** ToDo : ADMIN */
   // ─────────────────────────────────────────────────────────
   // ✅ 모든 사용자 정보 조회 API (관리자용)
