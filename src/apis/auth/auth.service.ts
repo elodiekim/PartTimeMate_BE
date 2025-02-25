@@ -185,17 +185,6 @@ export class AuthService {
       throw new InternalServerErrorException('Failed to logout user');
     }
   }
-  private async confirmPassword(
-    userPassword: string,
-    confirmPasswordDto: ConfirmPasswordDto,
-  ): Promise<boolean> {
-    const isPasswordValid = await bcrypt.compare(
-      confirmPasswordDto.password, // 사용자가 입력한 비밀번호
-      userPassword, // 데이터베이스에 저장된 해시된 비밀번호
-    );
-
-    return isPasswordValid;
-  }
 
   // 비밀번호 검증 메서드
   async validatePassword(
@@ -211,23 +200,31 @@ export class AuthService {
     message: string;
     statusCode: number;
   }> {
-    const findMyAccount = await this.usersService.findByEmail(user.email);
-    if (!findMyAccount) {
-      throw new UnauthorizedException('User not found.');
-    }
+    try {
+      const findMyAccount = await this.usersService.findByEmail(user.email);
+      if (!findMyAccount) {
+        throw new UnauthorizedException('User not found.');
+      }
 
-    const isPasswordValid = await this.validatePassword(
-      confirmPasswordDto.password,
-      findMyAccount.password,
-    );
-    if (!isPasswordValid) {
-      throw new UnauthorizedException('Please check your password.');
-    }
+      const isPasswordValid = await this.validatePassword(
+        confirmPasswordDto.password,
+        findMyAccount.password,
+      );
+      if (!isPasswordValid) {
+        throw new UnauthorizedException('Please check your password.');
+      }
 
-    await this.usersService.remove(user.id);
-    return {
-      message: 'User account successfully deleted.',
-      statusCode: 200,
-    };
+      await this.usersService.remove(user.id);
+      return {
+        message: 'User account successfully deleted.',
+        statusCode: 200,
+      };
+    } catch (error) {
+      if (error instanceof UnauthorizedException) {
+        throw error;
+      }
+      console.error('An unexpected error occurred:', error);
+      throw new InternalServerErrorException('An unexpected error occurred.');
+    }
   }
 }
