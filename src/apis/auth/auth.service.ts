@@ -89,7 +89,10 @@ export class AuthService {
       }
 
       // 비밀번호 비교
-      const isPasswordValid = await bcrypt.compare(password, user.password);
+      const isPasswordValid = await this.validatePassword(
+        password,
+        user.password,
+      );
 
       if (!isPasswordValid) {
         throw new UnauthorizedException('Please check your email or password.');
@@ -182,7 +185,7 @@ export class AuthService {
       throw new InternalServerErrorException('Failed to logout user');
     }
   }
-  async confirmPassword(
+  private async confirmPassword(
     userPassword: string,
     confirmPasswordDto: ConfirmPasswordDto,
   ): Promise<boolean> {
@@ -193,6 +196,14 @@ export class AuthService {
 
     return isPasswordValid;
   }
+
+  // 비밀번호 검증 메서드
+  async validatePassword(
+    plainPassword: string,
+    hashedPassword: string,
+  ): Promise<boolean> {
+    return bcrypt.compare(plainPassword, hashedPassword);
+  }
   async deleteMyAccount(
     user: { id: string; email: string },
     confirmPasswordDto: ConfirmPasswordDto,
@@ -201,15 +212,16 @@ export class AuthService {
     statusCode: number;
   }> {
     const findMyAccount = await this.usersService.findByEmail(user.email);
-    if (findMyAccount) {
-      const password = findMyAccount!.password;
-      const passwordCheck = await this.confirmPassword(
-        password,
-        confirmPasswordDto,
-      );
-      if (!passwordCheck) {
-        throw new UnauthorizedException('Please check your password.');
-      }
+    if (!findMyAccount) {
+      throw new UnauthorizedException('User not found.');
+    }
+
+    const isPasswordValid = await this.validatePassword(
+      confirmPasswordDto.password,
+      findMyAccount.password,
+    );
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Please check your password.');
     }
 
     await this.usersService.remove(user.id);
