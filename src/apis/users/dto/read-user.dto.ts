@@ -6,9 +6,9 @@ export class ReadUserDto {
     email: string;
     firstName: string;
     lastName: string;
-    phoneNumber: string;
+    phoneNumber?: string;
     role: string;
-    preferredLanguage;
+    preferredLanguage?: string;
     createdAt: Date;
     updatedAt: Date;
     deletedAt?: Date;

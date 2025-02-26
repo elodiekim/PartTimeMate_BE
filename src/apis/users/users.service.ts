@@ -3,6 +3,7 @@ import {
   ForbiddenException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -13,7 +14,7 @@ import { CreateAuthDto } from '../auth/dto/create-auth.dto';
 
 import * as bcrypt from 'bcryptjs';
 import { UpdatedUserResponse } from './types/user-response.interface';
-import { PageRequestDto, ReadAllUsersDto } from './dto/read-all-users.dto';
+import { ReadUserDto } from './dto/read-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -21,6 +22,11 @@ export class UsersService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
   ) {}
+
+  /**
+   * 사용자 생성(Auth - SIGN UP)
+   * @param createAuthDto
+   */
 
   async create(createAuthDto: CreateAuthDto): Promise<User> {
     try {
@@ -49,6 +55,10 @@ export class UsersService {
       throw new Error(`Failed to create user: ${e.message}`);
     }
   }
+  /**
+   * 공통 사용자 조회 (except password, refreshToken)
+   */
+
   async findOne(userId: string): Promise<User> {
     const user = await this.userRepository.findOne({
       where: { id: userId },
@@ -68,7 +78,12 @@ export class UsersService {
     }
     return user;
   }
-  async getMe(user: User) {
+
+  /**
+   * 현재 로그인한 유저 정보 조회
+   */
+
+  async getMe(user: User): Promise<ReadUserDto> {
     const data = await this.findOne(user.id);
 
     return {
@@ -77,6 +92,10 @@ export class UsersService {
       data,
     };
   }
+
+  /**
+   * 공통 사용자 조회 (include password, refreshToken)
+   */
   async findByEmail(email: string) {
     try {
       // const user = await this.userRepository.findOne({ where: { email } });
@@ -93,12 +112,18 @@ export class UsersService {
           'refreshToken',
         ],
       });
+      if (!user) {
+        throw new UnauthorizedException('Please check your email or password.');
+      }
       return user;
     } catch (e) {
       throw new Error(`Failed to find user by email: ${e.message}`);
     }
   }
 
+  /**
+   * RefreshToken 저장(Auth - LOGIN)
+   */
   async saveToken(userId: string, refreshToken: string) {
     try {
       const currentTime = new Date();
@@ -112,11 +137,19 @@ export class UsersService {
     }
   }
 
+  /**
+   * RefreshToken 삭제(Auth - Logout)
+   */
+
   async clearRefreshToken(userId: string): Promise<void> {
     await this.userRepository.update(userId, {
       refreshToken: null as unknown as string, //typeorm에서의 타입 검사 문제를 우회
     });
   }
+
+  /**
+   * 현재 로그인한 유저 정보 수정
+   */
 
   async updateMe(
     user: User,
@@ -147,10 +180,11 @@ export class UsersService {
     };
   }
 
-  // ─────────────────────────────────────────────────────────
-  // ✅ 공통 업데이트 로직 (사용자 & 관리자)
-  // ─────────────────────────────────────────────────────────
-  private async updateUserFields(
+  /**
+   * 공통 업데이트 로직 (User & Admin)
+   */
+
+  async updateUserFields(
     user: User,
     updateUserDto: UpdateUserDto,
   ): Promise<User> {
@@ -187,54 +221,9 @@ export class UsersService {
     return await this.userRepository.save(user);
   }
 
-  // ─────────────────────────────────────────────────────────
-  // ✅ 특정 사용자 정보 업데이트 (관리자 전용)
-  // ─────────────────────────────────────────────────────────
-  async update(
-    userId: string,
-    updateUserDto: UpdateUserDto,
-  ): Promise<UpdatedUserResponse> {
-    const existingUser = await this.findOne(userId);
-
-    if (!existingUser) {
-      throw new NotFoundException('User not found');
-    }
-
-    const updatedUser = await this.updateUserFields(
-      existingUser,
-      updateUserDto,
-    );
-    // 민감한 정보 제외하고 응답 생성
-    const { password, refreshToken, ...safeUser } = updatedUser;
-
-    return {
-      message: `User with ID ${existingUser.email} successfully updated`,
-      statusCode: 200,
-      data: safeUser,
-    };
-  }
-
-  async findAll(pageRequestDto: PageRequestDto): Promise<ReadAllUsersDto> {
-    const { page = 1 } = pageRequestDto;
-    const limit = 20;
-    const [users, totalCount] = await this.userRepository.findAndCount({
-      skip: (page - 1) * limit,
-      take: limit,
-    });
-    const totalPage = Math.ceil(totalCount / limit);
-    return {
-      message: 'Successfully retrieved all users.',
-      statusCode: 200,
-      data: {
-        users,
-        totalCount,
-        totalPage,
-        page,
-        // limit,
-      },
-    };
-  }
-
+  /**
+   * 공통 삭제 로직 (Auth & Admin)
+   */
   async remove(userId: string): Promise<{
     message: string;
     statusCode: number;

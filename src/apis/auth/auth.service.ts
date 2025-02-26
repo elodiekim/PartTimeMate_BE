@@ -84,9 +84,6 @@ export class AuthService {
 
       // 이메일로 사용자 찾기
       const user = await this.usersService.findByEmail(email);
-      if (!user) {
-        throw new UnauthorizedException('Please check your email or password.');
-      }
 
       // 비밀번호 비교
       const isPasswordValid = await this.validatePassword(
@@ -128,7 +125,9 @@ export class AuthService {
       throw new UnauthorizedException('An error occurred during login.');
     }
   }
-
+  /**
+   * refreshToken
+   */
   async refreshToken(refreshToken: string): Promise<{
     accessToken: string;
     message: string;
@@ -173,7 +172,9 @@ export class AuthService {
       { secret: process.env.JWT_REFRESH_SECRET, expiresIn: '7d' },
     );
   }
-
+  /**
+   * LOGOUT
+   */
   async logout(user): Promise<{ message: string; statusCode: number }> {
     try {
       await this.usersService.clearRefreshToken(user.id); // 해당 유저의 refreshToken을 제거
@@ -187,12 +188,15 @@ export class AuthService {
   }
 
   // 비밀번호 검증 메서드
-  async validatePassword(
+  private async validatePassword(
     plainPassword: string,
     hashedPassword: string,
   ): Promise<boolean> {
     return bcrypt.compare(plainPassword, hashedPassword);
   }
+  /**
+   * DELETE
+   */
   async deleteMyAccount(
     user: { id: string; email: string },
     confirmPasswordDto: ConfirmPasswordDto,
