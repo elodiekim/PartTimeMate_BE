@@ -5,10 +5,13 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
+  OneToMany,
 } from 'typeorm';
 
 import { IsDate, IsPhoneNumber } from 'class-validator';
 import { Exclude } from 'class-transformer';
+import { Company } from 'src/company/entities/company.entity';
+
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn('uuid')
@@ -57,4 +60,7 @@ export class User {
     type: 'timestamp',
   })
   deletedAt: Date;
+
+  @OneToMany(() => Company, (company) => company.user)
+  companies: Company[];
 }

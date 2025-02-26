@@ -7,9 +7,10 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Company } from './company.entity';
+
 import { JobCategory } from './job-category.entity';
-import { JobPostingBenefit } from './job-posting-benefit.entity';
+
+import { Company } from 'src/company/entities/company.entity';
 
 @Entity('job_postings')
 export class JobPosting {
@@ -49,15 +50,13 @@ export class JobPosting {
   @Column({ length: 50, nullable: true })
   employmentType?: string;
 
-  @OneToMany(
-    () => JobPostingBenefit,
-    (jobPostingBenefit) => jobPostingBenefit.jobPosting,
-  )
-  jobPostingBenefits: JobPostingBenefit[];
+  @Column()
+  benefits: string;
+  //   @ManyToOne(() => JobPosting, (jobPosting) => jobPosting.benefits)
+  //   jobPosting: JobPosting;
 
-  //   @Column({ length: 255, nullable: true })
-  //   customBenefit?: string;
-
+  //   @OneToMany(() => Benefit, (benefits) => benefits.jobPosting)
+  //   benefits: Benefit[];
   @Column({ length: 255, nullable: true })
   workAddress?: string;
 

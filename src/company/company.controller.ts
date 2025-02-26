@@ -1,0 +1,96 @@
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
+import { CompanyService } from './company.service';
+import { CreateCompanyDto } from './dto/create-company.dto';
+import { UpdateCompanyDto } from './dto/update-company.dto';
+import { JwtAuthGuard } from 'src/apis/auth/jwt/jwt.guard';
+
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { GetUser } from 'src/apis/decorators/get-user.decorator';
+import { User } from 'src/apis/users/entities/user.entity';
+import { BusinessGuard } from 'src/apis/auth/jwt/business.guard';
+import {
+  ReadAllCompaniesDto,
+  ReadCompanyDto,
+} from './dto/company-response.dto';
+
+@ApiTags('Companies API')
+@Controller('company')
+export class CompanyController {
+  constructor(private readonly companyService: CompanyService) {}
+  // ─────────────────────────────────────────────────────────
+  // ✅ 비지니스 권한 유저 회사 등록 API
+  // ─────────────────────────────────────────────────────────
+  @Post()
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, BusinessGuard)
+  @ApiOperation({ summary: 'Register a company for users with business role' })
+  @ApiResponse({ status: 201, description: 'Company successfully registered.' })
+  @ApiResponse({ status: 403, description: 'Forbidden.' })
+  create(@GetUser() user: User, @Body() createCompanyDto: CreateCompanyDto) {
+    return this.companyService.create(user, createCompanyDto);
+  }
+  // ─────────────────────────────────────────────────────────
+  // ✅ 비지니스 권한 유저 등록한 회사 조회 API
+  // ─────────────────────────────────────────────────────────
+  @Get()
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, BusinessGuard)
+  @ApiOperation({
+    summary:
+      'Retrieve all companies registered by the logged-in user with business role',
+  })
+  @ApiResponse({
+    status: 200,
+    description:
+      'Successfully retrieved the list of companies registered by the user',
+    type: ReadAllCompaniesDto,
+  })
+  @ApiResponse({ status: 403, description: 'Forbidden' })
+  findByUser(@GetUser() user: User): Promise<ReadAllCompaniesDto> {
+    return this.companyService.findByUser(user);
+  }
+  // ─────────────────────────────────────────────────────────
+  // ✅ 비지니스 권한 유저 등록한 회사 상세 조회 API
+  // ─────────────────────────────────────────────────────────
+  @Get(':id')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, BusinessGuard)
+  @ApiOperation({
+    summary:
+      'Retrieve details of a company registered by the logged-in user with business role',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully retrieved the company details.',
+    type: ReadCompanyDto,
+  })
+  @ApiResponse({ status: 403, description: 'Forbidden' })
+  @ApiResponse({ status: 404, description: 'Company not found' })
+  findOne(@GetUser() user: User, @Param('id') id: number) {
+    return this.companyService.findOne(user, id);
+  }
+
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateCompanyDto: UpdateCompanyDto) {
+    return this.companyService.update(+id, updateCompanyDto);
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.companyService.remove(+id);
+  }
+}

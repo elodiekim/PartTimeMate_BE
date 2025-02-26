@@ -2,11 +2,14 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { JobPosting } from './job-posting.entity';
+
+import { User } from 'src/apis/users/entities/user.entity';
+import { JobPosting } from 'src/job-postings/entities/job-posting.entity';
 
 @Entity('companies')
 export class Company {
@@ -27,4 +30,7 @@ export class Company {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @ManyToOne(() => User, (user) => user.companies)
+  user: User;
 }
