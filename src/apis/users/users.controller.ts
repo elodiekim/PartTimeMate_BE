@@ -22,7 +22,7 @@ import {
 } from '@nestjs/swagger';
 import { User } from './entities/user.entity';
 import { GetUser } from '../decorators/get-user.decorator';
-import { RolesGuard } from '../auth/jwt/roles.guard';
+import { AdminGuard } from '../auth/jwt/admin.guard';
 import { Roles } from '../decorators/roles.decorator';
 import { PageRequestDto, ReadAllUsersDto } from './dto/read-all-users.dto';
 
@@ -94,7 +94,7 @@ export class UsersController {
   // ✅ 모든 사용자 정보 조회 API (관리자용)
   // ─────────────────────────────────────────────────────────
   @Get('admin')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Roles('admin')
   @ApiOperation({
     summary: 'Retrieve all users information (Admin only)',
@@ -117,7 +117,7 @@ export class UsersController {
    * ReadUserDto 사용하여 수정
    * */
   @Get('admin/:id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Roles('admin')
   @ApiOperation({
     summary: 'Retrieve a user information (Admin only)',
@@ -133,7 +133,7 @@ export class UsersController {
   // ✅ 특정 사용자 정보 수정 API (관리자용)
   // ─────────────────────────────────────────────────────────
   @Patch('admin/:id')
-  @UseGuards(JwtAuthGuard, RolesGuard) // JWT 인증 + 관리자 권한 확인
+  @UseGuards(JwtAuthGuard, AdminGuard) // JWT 인증 + 관리자 권한 확인
   @Roles('admin') // role이 'admin'인 경우만 허용
   @ApiOperation({
     summary: 'Update a user information (Admin only)',
@@ -164,7 +164,7 @@ export class UsersController {
    * 탈퇴한 회원 포함 조회 필요?
    */
   @Delete('admin/:id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Roles('admin')
   @ApiOperation({
     summary: 'Soft delete a user (Admin only)',
