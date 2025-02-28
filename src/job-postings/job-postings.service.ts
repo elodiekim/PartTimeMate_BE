@@ -6,6 +6,7 @@ import { JobPosting } from './entities/job-posting.entity';
 import { Repository } from 'typeorm';
 import { JobCategory } from './entities/job-category.entity';
 import { CreateJobCategoryDto } from './dto/create-job-category.dto';
+import { ReadAllJobCategoriesDto } from './dto/job-category-response.dto';
 
 @Injectable()
 export class JobPostingsService {
@@ -35,8 +36,15 @@ export class JobPostingsService {
     return 'This action adds a new jobPosting';
   }
 
-  findAll() {
-    return `This action returns all jobPostings`;
+  async findAllCategories(): Promise<ReadAllJobCategoriesDto> {
+    const categories = await this.jobCategoryRepository.find({
+      order: { name: 'ASC' },
+    });
+    return {
+      message: 'Successfully retrieved all job categories',
+      statusCode: 200,
+      data: { categories },
+    };
   }
 
   findOne(id: number) {

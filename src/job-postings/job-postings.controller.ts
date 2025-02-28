@@ -20,6 +20,7 @@ import {
 } from '@nestjs/swagger';
 import { AdminGuard } from 'src/apis/auth/jwt/admin.guard';
 import { JwtAuthGuard } from 'src/apis/auth/jwt/jwt.guard';
+import { ReadAllJobCategoriesDto } from './dto/job-category-response.dto';
 
 @ApiTags('JobPostings API')
 @Controller('job-postings')
@@ -45,10 +46,20 @@ export class JobPostingsController {
   create(@Body() createJobPostingDto: CreateJobPostingDto) {
     return this.jobPostingsService.create(createJobPostingDto);
   }
-
-  @Get()
-  findAll() {
-    return this.jobPostingsService.findAll();
+  // ─────────────────────────────────────────────────────────
+  // ✅ 카테고리 전체 조회 API
+  // ─────────────────────────────────────────────────────────
+  @Get('category')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Retrieve all job categories' })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully retrieved all job categories',
+    type: ReadAllJobCategoriesDto,
+  })
+  findAllCategories() {
+    return this.jobPostingsService.findAllCategories();
   }
 
   @Get(':id')
