@@ -16,8 +16,8 @@ export class JobCategory {
   @Column({ length: 100 })
   name: string;
 
-  @OneToMany(() => JobPosting, (jobPosting) => jobPosting.jobCategory)
-  jobPostings: JobPosting[];
+  //   @OneToMany(() => JobPosting, (jobPosting) => jobPosting.jobCategory)
+  //   jobPostings: JobPosting[];
 
   @CreateDateColumn()
   createdAt: Date;

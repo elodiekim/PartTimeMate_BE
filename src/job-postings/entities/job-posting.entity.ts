@@ -23,8 +23,8 @@ export class JobPosting {
   @ManyToOne(() => Company, (company) => company.jobPostings)
   company: Company;
 
-  @ManyToOne(() => JobCategory, (jobCategory) => jobCategory.jobPostings)
-  jobCategory: JobCategory;
+  // @ManyToOne(() => JobCategory, (jobCategory) => jobCategory.jobPostings)
+  // jobCategory: JobCategory;
 
   @Column({ length: 50, nullable: true })
   salary?: string;

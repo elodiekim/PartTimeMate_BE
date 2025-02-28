@@ -6,9 +6,13 @@ import { JobPosting } from './entities/job-posting.entity';
 
 import { JobCategory } from './entities/job-category.entity';
 import { Benefit } from './entities/benefit.entity';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([JobPosting, JobCategory, Benefit])],
+  imports: [
+    TypeOrmModule.forFeature([JobPosting, JobCategory, Benefit]),
+    JwtModule,
+  ],
   controllers: [JobPostingsController],
   providers: [JobPostingsService],
 })
