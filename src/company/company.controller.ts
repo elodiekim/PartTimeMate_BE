@@ -26,6 +26,8 @@ import {
   ReadAllCompaniesDto,
   ReadCompanyDto,
 } from './dto/company-response.dto';
+import { AdminGuard } from 'src/apis/auth/jwt/admin.guard';
+import { RolesGuard } from 'src/apis/auth/jwt/role.guard';
 
 @ApiTags('Companies API')
 @Controller('company')
@@ -36,7 +38,7 @@ export class CompanyController {
   // ─────────────────────────────────────────────────────────
   @Post()
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard, BusinessGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: 'Register a company for users with business role' })
   @ApiResponse({ status: 201, description: 'Company successfully registered.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
@@ -48,7 +50,7 @@ export class CompanyController {
   // ─────────────────────────────────────────────────────────
   @Get()
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard, BusinessGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({
     summary:
       'Retrieve all companies registered by the logged-in user with business role',
@@ -68,7 +70,7 @@ export class CompanyController {
   // ─────────────────────────────────────────────────────────
   @Get(':id')
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard, BusinessGuard)
+  @UseGuards(JwtAuthGuard, BusinessGuard, AdminGuard)
   @ApiOperation({
     summary:
       'Retrieve details of a company registered by the logged-in user with business role',

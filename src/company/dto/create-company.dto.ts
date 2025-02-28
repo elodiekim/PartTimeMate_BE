@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsString, IsUrl } from 'class-validator';
 
 export class CreateCompanyDto {
   @IsString()
@@ -16,4 +16,28 @@ export class CreateCompanyDto {
   @IsOptional()
   @IsString()
   logoUrl?: string;
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({
+    description: 'The name of the CEO',
+    example: 'John Doe',
+  })
+  ceoName?: string;
+
+  @IsOptional()
+  @IsUrl()
+  @ApiPropertyOptional({
+    description: 'The website of the company',
+    example: 'https://example.com',
+  })
+  website?: string;
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({
+    description: 'The contact email of the company',
+    example: 'contact@example.com',
+  })
+  contactEmail?: string;
 }

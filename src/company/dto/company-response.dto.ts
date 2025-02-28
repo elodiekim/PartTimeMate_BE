@@ -7,6 +7,9 @@ export class ReadCompanyDto {
     id: number;
     name: string;
     logoUrl?: string;
+    ceoName?: string;
+    website?: string;
+    contactEmail?: string;
     createdAt: Date;
     updatedAt: Date;
   };

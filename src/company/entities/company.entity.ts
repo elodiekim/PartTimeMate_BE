@@ -25,6 +25,15 @@ export class Company {
   @OneToMany(() => JobPosting, (jobPosting) => jobPosting.company)
   jobPostings: JobPosting[];
 
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  ceoName?: string;
+
+  @Column({ nullable: true })
+  website?: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  contactEmail?: string;
+
   @CreateDateColumn()
   createdAt: Date;
 
