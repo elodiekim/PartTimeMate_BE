@@ -112,9 +112,7 @@ export class UsersService {
           'refreshToken',
         ],
       });
-      if (!user) {
-        throw new UnauthorizedException('Please check your email or password.');
-      }
+
       return user;
     } catch (e) {
       throw new Error(`Failed to find user by email: ${e.message}`);

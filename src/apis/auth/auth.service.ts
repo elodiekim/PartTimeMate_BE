@@ -84,7 +84,9 @@ export class AuthService {
 
       // 이메일로 사용자 찾기
       const user = await this.usersService.findByEmail(email);
-
+      if (!user) {
+        throw new UnauthorizedException('Please check your email or password.');
+      }
       // 비밀번호 비교
       const isPasswordValid = await this.validatePassword(
         password,
@@ -121,7 +123,7 @@ export class AuthService {
       if (e instanceof UnauthorizedException) {
         throw e; // 이미 정의된 UnauthorizedException을 그대로 던지기
       }
-      console.log(e.message);
+
       throw new UnauthorizedException('An error occurred during login.');
     }
   }
