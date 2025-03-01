@@ -35,8 +35,8 @@ export class CreateAuthDto {
   })
   @IsString()
   @IsNotEmpty()
-  @MinLength(8)
-  @MaxLength(32)
+  //   @MinLength(8)
+  //   @MaxLength(32)
   //   @Matches(/^[a-zA-Z0-9!@#$%^&*]{8,32}$/, {
   //     message:
   //       'Password must be between 8 and 32 characters and contain letters, numbers, and special characters.',

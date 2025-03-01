@@ -40,11 +40,27 @@ export class UpdateUserDto extends PartialType(
   })
   @IsString()
   @IsOptional()
-  @MinLength(8)
-  @MaxLength(32)
-  @Matches(/^[a-zA-Z0-9!@#$%^&*]{8,32}$/, {
-    message:
-      'Password must be between 8 and 32 characters and contain letters, numbers, and special characters.',
+  // @MinLength(8)
+  // @MaxLength(32)
+  // @Matches(/^[a-zA-Z0-9!@#$%^&*]{8,32}$/, {
+  //   message:
+  //     'Password must be between 8 and 32 characters and contain letters, numbers, and special characters.',
+  // })
+  @MinLength(8, {
+    message: 'Password is too short. It should be at least 8 characters long.',
+  })
+  @MaxLength(32, {
+    message: 'Password is too long. It should be at most 32 characters long.',
+  })
+  @Matches(/.*[A-Z].*/, {
+    message: 'Password must contain at least one uppercase letter.',
+  })
+  @Matches(/.*[a-z].*/, {
+    message: 'Password must contain at least one lowercase letter.',
+  })
+  @Matches(/.*\d.*/, { message: 'Password must contain at least one number.' })
+  @Matches(/.*[!@#$%^&*].*/, {
+    message: 'Password must contain at least one special character.',
   })
   password?: string;
 
