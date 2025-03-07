@@ -21,6 +21,7 @@ import {
 import { AdminGuard } from 'src/apis/auth/jwt/admin.guard';
 import { JwtAuthGuard } from 'src/apis/auth/jwt/jwt.guard';
 import { ReadAllJobCategoriesDto } from './dto/job-category-response.dto';
+import { CreateSubCategoryDto } from './dto/create-sub-category.dto';
 
 @ApiTags('JobPostings API')
 @Controller('job-postings')
@@ -42,10 +43,22 @@ export class JobPostingsController {
     return this.jobPostingsService.createCategory(createJobCategoryDto);
   }
 
-  @Post()
-  create(@Body() createJobPostingDto: CreateJobPostingDto) {
-    return this.jobPostingsService.create(createJobPostingDto);
+  // ─────────────────────────────────────────────────────────
+  // ✅ 관리자 권한 서브 카테고리 등록 API
+  // ─────────────────────────────────────────────────────────
+  @Post('subcategory')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, AdminGuard)
+  @ApiOperation({ summary: 'Create a new job subcategory' })
+  @ApiResponse({
+    status: 201,
+    description: 'The job subcategory has been successfully created.',
+  })
+  @ApiResponse({ status: 400, description: 'Bad Request.' })
+  async createSubCategory(@Body() createSubCategoryDto: CreateSubCategoryDto) {
+    return this.jobPostingsService.createSubCategory(createSubCategoryDto);
   }
+
   // ─────────────────────────────────────────────────────────
   // ✅ 카테고리 전체 조회 API
   // ─────────────────────────────────────────────────────────
@@ -61,7 +74,25 @@ export class JobPostingsController {
   findAllCategories() {
     return this.jobPostingsService.findAllCategories();
   }
-
+  // ─────────────────────────────────────────────────────────
+  // ✅ 카테고리별 서브카테고리 조회 API
+  // ─────────────────────────────────────────────────────────
+  @Get('category/:id/subcategories')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Retrieve subcategories by category ID' })
+  @ApiResponse({
+    status: 200,
+    description:
+      'Successfully retrieved subcategories for the given category ID',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'No subcategories found for the given category ID.',
+  })
+  async findSubCategoriesByCategoryId(@Param('id') id: number) {
+    return this.jobPostingsService.findSubCategoriesByCategoryId(id);
+  }
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.jobPostingsService.findOne(+id);

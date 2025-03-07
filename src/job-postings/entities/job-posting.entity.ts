@@ -11,6 +11,7 @@ import {
 import { JobCategory } from './job-category.entity';
 
 import { Company } from 'src/company/entities/company.entity';
+import { Benefit } from './benefit.entity';
 
 @Entity('job_postings')
 export class JobPosting {
@@ -50,13 +51,13 @@ export class JobPosting {
   @Column({ length: 50, nullable: true })
   employmentType?: string;
 
-  @Column()
-  benefits: string;
+  // @Column()
+  // benefits: string;
   //   @ManyToOne(() => JobPosting, (jobPosting) => jobPosting.benefits)
   //   jobPosting: JobPosting;
 
-  //   @OneToMany(() => Benefit, (benefits) => benefits.jobPosting)
-  //   benefits: Benefit[];
+  @OneToMany(() => Benefit, (benefits) => benefits.jobPosting)
+  benefits: Benefit[];
   @Column({ length: 255, nullable: true })
   workAddress?: string;
 

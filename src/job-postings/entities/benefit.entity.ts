@@ -4,7 +4,9 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
 } from 'typeorm';
+import { JobPosting } from './job-posting.entity';
 
 @Entity('benefits')
 export class Benefit {
@@ -20,6 +22,6 @@ export class Benefit {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  //   @ManyToOne(() => JobPosting, (jobPosting) => jobPosting.benefits)
-  //   jobPosting: JobPosting;
+  @ManyToOne(() => JobPosting, (jobPosting) => jobPosting.benefits)
+  jobPosting: JobPosting;
 }
