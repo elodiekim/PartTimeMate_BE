@@ -8,8 +8,6 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { JobCategory } from './job-category.entity';
-
 import { Company } from 'src/company/entities/company.entity';
 import { Benefit } from './benefit.entity';
 

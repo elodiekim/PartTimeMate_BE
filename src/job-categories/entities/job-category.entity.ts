@@ -6,7 +6,6 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { JobPosting } from './job-posting.entity';
 import { SubCategory } from './sub-category.entity';
 
 @Entity('job_categories')

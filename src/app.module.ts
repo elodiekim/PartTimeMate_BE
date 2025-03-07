@@ -10,16 +10,29 @@ import { AuthModule } from './apis/auth/auth.module';
 import { JobPostingsModule } from './job-postings/job-postings.module';
 import { CompanyModule } from './company/company.module';
 import { AdminModule } from './admin/admin.module';
+import { JobCategoriesModule } from './job-categories/job-categories.module';
+
 import * as path from 'path';
 @Module({
-  imports: [  ConfigModule.forRoot({
-    isGlobal: true,
-    validationSchema: configValidationSchema,
-    // envFilePath: `${__dirname}/../.env.${process.env.NODE_ENV}`,
-    envFilePath: path.join(__dirname, '../.env.' + (process.env.NODE_ENV || 'local')),  // 절대 경로 사용
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      validationSchema: configValidationSchema,
+      // envFilePath: `${__dirname}/../.env.${process.env.NODE_ENV}`,
+      envFilePath: path.join(
+        __dirname,
+        '../.env.' + (process.env.NODE_ENV || 'local'),
+      ), // 절대 경로 사용
+    }),
+    TypeOrmModule.forRootAsync(typeOrmModuleOptions),
+    UsersModule,
+    AuthModule,
+    JobPostingsModule,
+    CompanyModule,
+    AdminModule,
+    JobCategoriesModule,
+  ],
 
-  }) ,TypeOrmModule.forRootAsync(typeOrmModuleOptions), UsersModule, AuthModule, JobPostingsModule, CompanyModule, AdminModule],
-  
   controllers: [AppController],
   providers: [AppService],
 })
