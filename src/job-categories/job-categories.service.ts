@@ -99,8 +99,10 @@ export class JobCategoriesService {
   update(id: number, updateJobCategoryDto: UpdateJobCategoryDto) {
     return `This action updates a #${id} jobCategory`;
   }
-
+  async updateSubCategory(id: number) {}
   remove(id: number) {
     return `This action removes a #${id} jobCategory`;
   }
+
+  async removeSubCategory(id: number) {}
 }

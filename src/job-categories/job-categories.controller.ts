@@ -92,7 +92,9 @@ export class JobCategoriesController {
   async findSubCategoriesByCategoryId(@Param('id') id: number) {
     return this.jobCategoriesService.findSubCategoriesByCategoryId(id);
   }
-
+  // ─────────────────────────────────────────────────────────
+  // ✅ 관리자 권한 카테고리 수정 API
+  // ─────────────────────────────────────────────────────────
   @Patch(':id')
   update(
     @Param('id') id: string,
@@ -100,9 +102,28 @@ export class JobCategoriesController {
   ) {
     return this.jobCategoriesService.update(+id, updateJobCategoryDto);
   }
-
+  // ─────────────────────────────────────────────────────────
+  // ✅ 관리자 권한 서브카테고리 수정 API
+  // ─────────────────────────────────────────────────────────
+  @Patch('subcategory/:id')
+  updateSubCategory(
+    @Param('id') id: number,
+    @Body() updateJobCategoryDto: UpdateJobCategoryDto,
+  ) {
+    return this.jobCategoriesService.updateSubCategory(id);
+  }
+  // ─────────────────────────────────────────────────────────
+  // ✅ 관리자 권한 카테고리 삭제 API
+  // ─────────────────────────────────────────────────────────
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.jobCategoriesService.remove(+id);
+  }
+  // ─────────────────────────────────────────────────────────
+  // ✅ 관리자 권한 서브카테고리 삭제 API
+  // ─────────────────────────────────────────────────────────
+  @Delete('subcategory/:id')
+  async removeSubCategory(@Param('id') id: number) {
+    return this.jobCategoriesService.removeSubCategory(+id);
   }
 }
