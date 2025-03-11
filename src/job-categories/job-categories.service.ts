@@ -8,6 +8,7 @@ import { SubCategory } from './entities/sub-category.entity';
 import { CreateSubCategoryDto } from './dto/create-sub-category.dto';
 import { ReadAllJobCategoriesDto } from './dto/job-category-response.dto';
 import { ReadAllSubCategoriesDto } from './dto/sub-category-response.dto';
+import { UpdateSubCategoryDto } from './dto/update-sub-category.dto';
 
 @Injectable()
 export class JobCategoriesService {
@@ -96,10 +97,64 @@ export class JobCategoriesService {
       data: { subCategories },
     };
   }
-  update(id: number, updateJobCategoryDto: UpdateJobCategoryDto) {
-    return `This action updates a #${id} jobCategory`;
+
+  // async findOneCategory(id: number) {
+  //   const category = await this.jobCategoryRepository.
+
+  // }
+  async update(id: number, updateJobCategoryDto: UpdateJobCategoryDto) {
+    const category = await this.jobCategoryRepository.findOne({
+      where: { id },
+    });
+
+    if (!category) {
+      throw new NotFoundException(`JobCategory with ID ${id} not found.`);
+    }
+
+    category.name = updateJobCategoryDto.name ?? category.name;
+    await this.jobCategoryRepository.save(category);
+
+    return {
+      message: `JobCategory update successful`,
+      statusCode: 200,
+      data: {
+        id: category.id,
+        name: category.name,
+        createdAt: category.createdAt,
+        updatedAt: category.updatedAt,
+      },
+    };
   }
-  async updateSubCategory(id: number) {}
+  async updateSubCategory(
+    id: number,
+    updateSubCategoryDto: UpdateSubCategoryDto,
+  ) {
+    const subCategory = await this.subCategoryRepository.findOne({
+      where: { id },
+    });
+
+    if (!subCategory) {
+      throw new NotFoundException(`SubCategory with ID ${id} not found.`);
+    }
+
+    if (updateSubCategoryDto.name) {
+      subCategory.name = updateSubCategoryDto.name;
+    }
+
+    await this.subCategoryRepository.save(subCategory);
+
+    return {
+      message: `SubCategory update successful`,
+      statusCode: 200,
+      data: {
+        id: subCategory.id,
+        name: subCategory.name,
+        jobCategoryId: subCategory.jobCategory.id,
+        createdAt: subCategory.createdAt,
+        updatedAt: subCategory.updatedAt,
+      },
+    };
+  }
   remove(id: number) {
     return `This action removes a #${id} jobCategory`;
   }

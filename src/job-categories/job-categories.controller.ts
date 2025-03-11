@@ -21,6 +21,7 @@ import { JwtAuthGuard } from 'src/apis/auth/jwt/jwt.guard';
 import { AdminGuard } from 'src/apis/auth/jwt/admin.guard';
 import { CreateSubCategoryDto } from './dto/create-sub-category.dto';
 import { ReadAllJobCategoriesDto } from './dto/job-category-response.dto';
+import { UpdateSubCategoryDto } from './dto/update-sub-category.dto';
 
 @ApiTags('JobCategories API')
 @Controller('job-categories')
@@ -96,21 +97,41 @@ export class JobCategoriesController {
   // ✅ 관리자 권한 카테고리 수정 API
   // ─────────────────────────────────────────────────────────
   @Patch(':id')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, AdminGuard)
+  @ApiOperation({ summary: 'Update a job category' })
+  @ApiResponse({
+    status: 200,
+    description: 'The job category has been successfully updated.',
+  })
+  @ApiResponse({ status: 404, description: 'Job category not found.' })
   update(
-    @Param('id') id: string,
+    @Param('id') id: number,
     @Body() updateJobCategoryDto: UpdateJobCategoryDto,
   ) {
-    return this.jobCategoriesService.update(+id, updateJobCategoryDto);
+    return this.jobCategoriesService.update(id, updateJobCategoryDto);
   }
   // ─────────────────────────────────────────────────────────
   // ✅ 관리자 권한 서브카테고리 수정 API
   // ─────────────────────────────────────────────────────────
   @Patch('subcategory/:id')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, AdminGuard)
+  @ApiOperation({ summary: 'Update a job subcategory' })
+  @ApiResponse({
+    status: 200,
+    description: 'The job subcategory has been successfully updated.',
+  })
+  @ApiResponse({ status: 400, description: 'Bad Request.' })
+  @ApiResponse({ status: 404, description: 'SubCategory not found.' })
   updateSubCategory(
     @Param('id') id: number,
-    @Body() updateJobCategoryDto: UpdateJobCategoryDto,
+    @Body() updateSubCategoryDto: UpdateSubCategoryDto,
   ) {
-    return this.jobCategoriesService.updateSubCategory(id);
+    return this.jobCategoriesService.updateSubCategory(
+      id,
+      updateSubCategoryDto,
+    );
   }
   // ─────────────────────────────────────────────────────────
   // ✅ 관리자 권한 카테고리 삭제 API
