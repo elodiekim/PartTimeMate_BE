@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -95,7 +99,64 @@ export class CompanyService {
     return `This action updates a #${id} company`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} company`;
+  async remove(
+    user,
+    id: number,
+  ): Promise<{ message: string; statusCode: number }> {
+    // if (user.role === 'BUSINESS') {
+    //   const company = await this.companyRepository
+    //     .createQueryBuilder('company')
+    //     .innerJoinAndSelect('company.user', 'user')
+    //     .where('company.id = :companyId', { companyId: id })
+    //     .andWhere('user.id = :userId', { userId: user.id })
+    //     .getOne();
+
+    //   if (!company) {
+    //     throw new ForbiddenException(
+    //       'You do not have permission to delete this company.',
+    //     );
+    //   }
+    //   await this.companyRepository.softDelete(id);
+    // }
+
+    // if (user.role === 'ADMIN') {
+    //   await this.companyRepository.softDelete(id);
+    // }
+
+    // return {
+    //   message: 'Company successfully soft deleted',
+    //   statusCode: 200,
+    // };
+    const company = await this.companyRepository.findOne({
+      where: { id },
+      relations: ['user'],
+    });
+
+    if (!company) {
+      throw new NotFoundException(`Company with ID ${id} not found.`);
+    }
+
+    // ADMIN 역할을 가진 사용자는 모든 회사 삭제 가능
+    if (user.role === 'ADMIN') {
+      await this.companyRepository.softRemove(company);
+      return {
+        message: 'Company successfully soft deleted by admin.',
+        statusCode: 200,
+      };
+    }
+
+    // BUSINESS 역할을 가진 사용자는 자신이 소유한 회사만 삭제 가능
+    if (user.role === 'BUSINESS' && company.user.id === user.id) {
+      await this.companyRepository.softRemove(company);
+      return {
+        message: 'Company successfully soft deleted by owner.',
+        statusCode: 200,
+      };
+    }
+
+    // 권한이 없는 경우
+    throw new ForbiddenException(
+      'You do not have permission to delete this company.',
+    );
   }
 }

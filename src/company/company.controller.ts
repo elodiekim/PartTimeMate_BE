@@ -42,7 +42,10 @@ export class CompanyController {
   @ApiOperation({ summary: 'Register a company for users with business role' })
   @ApiResponse({ status: 201, description: 'Company successfully registered.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  create(@GetUser() user: User, @Body() createCompanyDto: CreateCompanyDto) {
+  async create(
+    @GetUser() user: User,
+    @Body() createCompanyDto: CreateCompanyDto,
+  ) {
     return this.companyService.create(user, createCompanyDto);
   }
   // ─────────────────────────────────────────────────────────
@@ -62,7 +65,7 @@ export class CompanyController {
     type: ReadAllCompaniesDto,
   })
   @ApiResponse({ status: 403, description: 'Forbidden' })
-  findByUser(@GetUser() user: User): Promise<ReadAllCompaniesDto> {
+  async findByUser(@GetUser() user: User): Promise<ReadAllCompaniesDto> {
     return this.companyService.findByUser(user);
   }
   // ─────────────────────────────────────────────────────────
@@ -82,17 +85,33 @@ export class CompanyController {
   })
   @ApiResponse({ status: 403, description: 'Forbidden' })
   @ApiResponse({ status: 404, description: 'Company not found' })
-  findOne(@GetUser() user: User, @Param('id') id: number) {
+  async findOne(@GetUser() user: User, @Param('id') id: number) {
     return this.companyService.findOne(user, id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCompanyDto: UpdateCompanyDto) {
+  async update(
+    @Param('id') id: string,
+    @Body() updateCompanyDto: UpdateCompanyDto,
+  ) {
     return this.companyService.update(+id, updateCompanyDto);
   }
 
+  // ─────────────────────────────────────────────────────────
+  // ✅ 등록한 회사 삭제 API
+  // ─────────────────────────────────────────────────────────
+
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.companyService.remove(+id);
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Delete a company by ID' })
+  @ApiResponse({
+    status: 200,
+    description: 'Company successfully soft deleted.',
+  })
+  @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @ApiResponse({ status: 404, description: 'Company not found.' })
+  async remove(@GetUser() user: User, @Param('id') id: number) {
+    return this.companyService.remove(user, id);
   }
 }
