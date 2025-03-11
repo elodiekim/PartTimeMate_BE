@@ -155,9 +155,41 @@ export class JobCategoriesService {
       },
     };
   }
-  remove(id: number) {
-    return `This action removes a #${id} jobCategory`;
+  async remove(id: number): Promise<{
+    message: string;
+    statusCode: number;
+  }> {
+    const category = await this.jobCategoryRepository.findOne({
+      where: { id },
+    });
+
+    if (!category) {
+      throw new NotFoundException(`JobCategory with ID ${id} not found.`);
+    }
+
+    await this.jobCategoryRepository.softRemove(category);
+
+    return {
+      message: 'JobCategory successfully soft deleted',
+      statusCode: 200,
+    };
   }
 
-  async removeSubCategory(id: number) {}
+  async removeSubCategory(id: number): Promise<{
+    message: string;
+    statusCode: number;
+  }> {
+    const subCategory = await this.subCategoryRepository.findOne({
+      where: { id },
+    });
+
+    if (!subCategory) {
+      throw new NotFoundException(`SubCategory with ID ${id} not found.`);
+    }
+    await this.jobCategoryRepository.softRemove(subCategory);
+    return {
+      message: 'SubCategory successfully soft deleted',
+      statusCode: 200,
+    };
+  }
 }

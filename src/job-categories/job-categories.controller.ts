@@ -137,13 +137,29 @@ export class JobCategoriesController {
   // ✅ 관리자 권한 카테고리 삭제 API
   // ─────────────────────────────────────────────────────────
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.jobCategoriesService.remove(+id);
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, AdminGuard)
+  @ApiOperation({ summary: 'Delete a job category' })
+  @ApiResponse({
+    status: 200,
+    description: 'The job category has been successfully deleted.',
+  })
+  @ApiResponse({ status: 404, description: 'JobCategory not found.' })
+  async remove(@Param('id') id: number) {
+    return this.jobCategoriesService.remove(id);
   }
   // ─────────────────────────────────────────────────────────
   // ✅ 관리자 권한 서브카테고리 삭제 API
   // ─────────────────────────────────────────────────────────
   @Delete('subcategory/:id')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, AdminGuard)
+  @ApiOperation({ summary: 'Delete a job subcategory' })
+  @ApiResponse({
+    status: 200,
+    description: 'The job subcategory has been successfully deleted.',
+  })
+  @ApiResponse({ status: 404, description: 'SubCategory not found.' })
   async removeSubCategory(@Param('id') id: number) {
     return this.jobCategoriesService.removeSubCategory(+id);
   }
