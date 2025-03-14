@@ -233,4 +233,17 @@ export class AuthService {
       throw new InternalServerErrorException('An unexpected error occurred.');
     }
   }
+
+  async googleLogin(user) {
+    // const payload = { email: user.email, sub: user.id };
+    // console.log(user);
+    const accessToken = this.generateAccessToken(user);
+    const refreshToken = this.generateRefreshToken(user);
+
+    // 리프레시 토큰을 DB에 저장
+    await this.usersService.saveToken(user.id, refreshToken);
+    return {
+      message: 'Google login successful',
+    };
+  }
 }

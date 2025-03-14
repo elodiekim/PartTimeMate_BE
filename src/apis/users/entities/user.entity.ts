@@ -20,7 +20,7 @@ export class User {
   @Column({ type: 'varchar', length: 255, unique: true })
   email: string;
   @Exclude()
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ type: 'varchar', length: 255, nullable: true })
   password: string;
 
   @Column({ type: 'varchar', length: 100 })
@@ -32,8 +32,9 @@ export class User {
   @Column({ type: 'varchar', length: 15, nullable: true })
   phoneNumber?: string;
 
-  @Column({ type: 'varchar', length: 50 })
+  @Column({ type: 'varchar', length: 50, default: 'JOB_SEEKER' })
   role: string;
+
   @Exclude()
   @Column({ type: 'text', nullable: true })
   refreshToken?: string | null;

@@ -7,6 +7,8 @@ import {
   Param,
   Delete,
   UseGuards,
+  Req,
+  Query,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
@@ -25,6 +27,7 @@ import { JwtAuthGuard } from './jwt/jwt.guard';
 import { GetUser } from '../decorators/get-user.decorator';
 import { User } from '../users/entities/user.entity';
 import { ConfirmPasswordDto } from './dto/confirm-password.dto';
+import { GoogleAuthGuard } from './jwt/goolgle.guard';
 
 @ApiTags('Auth API')
 @Controller('auth')
@@ -181,5 +184,16 @@ export class AuthController {
     @Body() confirmPasswordDto: ConfirmPasswordDto,
   ) {
     return this.authService.deleteMyAccount(user, confirmPasswordDto);
+  }
+
+  @Get('google')
+  @UseGuards(GoogleAuthGuard)
+  async googleAuth() {
+    // 구글 로그인 페이지로 리다이렉트
+  }
+  @Get('google/callback')
+  @UseGuards(GoogleAuthGuard)
+  async googleAuthRedirect(@GetUser() user: User) {
+    return this.authService.googleLogin(user);
   }
 }
