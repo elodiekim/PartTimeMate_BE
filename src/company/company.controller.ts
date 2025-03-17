@@ -51,6 +51,7 @@ export class CompanyController {
   // ─────────────────────────────────────────────────────────
   // ✅ 비지니스 권한 유저 등록한 회사 조회 API
   // ─────────────────────────────────────────────────────────
+  //
   @Get()
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, RolesGuard)
