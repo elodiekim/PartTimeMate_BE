@@ -167,6 +167,15 @@ export class JobCategoriesService {
       throw new NotFoundException(`JobCategory with ID ${id} not found.`);
     }
 
+    // 해당 카테고리에 속한 모든 서브 카테고리 찾기
+    const subCategories = await this.subCategoryRepository.find({
+      where: { jobCategory: { id } },
+    });
+    // 서브 카테고리들을 삭제
+    if (subCategories.length > 0) {
+      await this.subCategoryRepository.softRemove(subCategories);
+    }
+
     await this.jobCategoryRepository.softRemove(category);
 
     return {
