@@ -88,13 +88,31 @@ export class CompanyController {
   async findOne(@GetUser() user: User, @Param('id') id: number) {
     return this.companyService.findOne(user, id);
   }
-
+  // ─────────────────────────────────────────────────────────
+  // ✅ 비지니스 권한 유저 등록한 회사 수정 API
+  // ─────────────────────────────────────────────────────────
   @Patch(':id')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, BusinessGuard, AdminGuard)
+  @ApiOperation({
+    summary: 'Update company information',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Company information updated successfully.',
+    type: ReadCompanyDto,
+  })
+  @ApiResponse({
+    status: 403,
+    description:
+      'Forbidden. You do not have permission to perform this action.',
+  })
+  @ApiResponse({ status: 404, description: 'Company not found' })
   async update(
-    @Param('id') id: string,
+    @Param('id') id: number,
     @Body() updateCompanyDto: UpdateCompanyDto,
   ) {
-    return this.companyService.update(+id, updateCompanyDto);
+    return this.companyService.update(id, updateCompanyDto);
   }
 
   // ─────────────────────────────────────────────────────────

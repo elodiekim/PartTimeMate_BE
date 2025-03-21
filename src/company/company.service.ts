@@ -94,9 +94,39 @@ export class CompanyService {
       );
     }
   }
+  /** company patch ----> separate findOne */
+  async update(id: number, updateCompanyDto: UpdateCompanyDto) {
+    const company = await this.companyRepository.findOne({
+      where: { id },
+    });
 
-  update(id: number, updateCompanyDto: UpdateCompanyDto) {
-    return `This action updates a #${id} company`;
+    if (!company) {
+      throw new NotFoundException(`Company with ID ${id} not found.`);
+    }
+
+    // 엔터티의 각 필드를 개별적으로 업데이트
+    company.name = updateCompanyDto.name ?? company.name;
+    company.logoUrl = updateCompanyDto.logoUrl ?? company.logoUrl;
+    company.ceoName = updateCompanyDto.ceoName ?? company.ceoName;
+    company.website = updateCompanyDto.website ?? company.website;
+    company.contactEmail =
+      updateCompanyDto.contactEmail ?? company.contactEmail;
+
+    await this.companyRepository.save(company);
+    return {
+      message: 'Company update successful',
+      statusCode: 200,
+      data: {
+        id: company.id,
+        name: company.name,
+        logoUrl: company.logoUrl,
+        ceoName: company.ceoName,
+        website: company.website,
+        contactEmail: company.contactEmail,
+        createdAt: company.createdAt,
+        updatedAt: company.updatedAt,
+      },
+    };
   }
 
   async remove(
