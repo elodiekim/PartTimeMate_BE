@@ -15,8 +15,8 @@ export class BusinessGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const user: User = request.user;
 
-    // 사용자 정보가 없거나, BUSINESS 역할이 아니면 접근 불가
-    if (!user || user.role !== 'BUSINESS') {
+    // 사용자 정보가 없거나, BUSINESS ,ADMIN 역할이 아니면 접근 불가
+    if (!user || user.role == 'JOB_SEEKER') {
       throw new ForbiddenException(
         'You do not have permission to perform this action.',
       );
