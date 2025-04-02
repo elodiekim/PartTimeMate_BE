@@ -4,12 +4,14 @@ import {
   Entity,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
 import { Company } from 'src/apis/company/entities/company.entity';
 import { Benefit } from '../../job-benefits/entities/benefit.entity';
+import { JobCategory } from 'src/apis/job-categories/entities/job-category.entity';
 
 @Entity('job_postings')
 export class JobPosting {
@@ -22,8 +24,8 @@ export class JobPosting {
   @ManyToOne(() => Company, (company) => company.jobPostings)
   company: Company;
 
-  // @ManyToOne(() => JobCategory, (jobCategory) => jobCategory.jobPostings)
-  // jobCategory: JobCategory;
+  @ManyToOne(() => JobCategory, (jobCategory) => jobCategory.jobPostings)
+  jobCategory: JobCategory;
 
   @Column({ length: 50, nullable: true })
   salary?: string;
@@ -48,14 +50,6 @@ export class JobPosting {
 
   @Column({ length: 50, nullable: true })
   employmentType?: string;
-
-  // @Column()
-  // benefits: string;
-  //   @ManyToOne(() => JobPosting, (jobPosting) => jobPosting.benefits)
-  //   jobPosting: JobPosting;
-
-  // @OneToMany(() => Benefit, (benefits) => benefits.jobPosting)
-  // benefits: Benefit[];
 
   @Column({ length: 255, nullable: true })
   workAddress?: string;
