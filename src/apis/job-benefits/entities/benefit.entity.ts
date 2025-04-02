@@ -5,8 +5,9 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
+  DeleteDateColumn,
 } from 'typeorm';
-import { JobPosting } from './job-posting.entity';
+import { JobPosting } from '../../job-postings/entities/job-posting.entity';
 
 @Entity('benefits')
 export class Benefit {
@@ -22,6 +23,9 @@ export class Benefit {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToOne(() => JobPosting, (jobPosting) => jobPosting.benefits)
-  jobPosting: JobPosting;
+  @DeleteDateColumn()
+  deletedAt: Date;
+
+  // @ManyToOne(() => JobPosting, (jobPosting) => jobPosting.benefits)
+  // jobPosting: JobPosting;
 }
