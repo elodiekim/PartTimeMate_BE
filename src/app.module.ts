@@ -7,12 +7,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmModuleOptions } from './utils/typeOrmModuleOptions';
 import { UsersModule } from './apis/users/users.module';
 import { AuthModule } from './apis/auth/auth.module';
-import { JobPostingsModule } from './job-postings/job-postings.module';
-import { CompanyModule } from './company/company.module';
+import { JobPostingsModule } from './apis/job-postings/job-postings.module';
+import { CompanyModule } from './apis/company/company.module';
 import { AdminModule } from './admin/admin.module';
-import { JobCategoriesModule } from './job-categories/job-categories.module';
+import { JobCategoriesModule } from './apis/job-categories/job-categories.module';
 
 import * as path from 'path';
+import { JobBenefitsModule } from './apis/job-benefits/job-benefits.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -31,6 +32,7 @@ import * as path from 'path';
     CompanyModule,
     AdminModule,
     JobCategoriesModule,
+    JobBenefitsModule,
   ],
 
   controllers: [AppController],

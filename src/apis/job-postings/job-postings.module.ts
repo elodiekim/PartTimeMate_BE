@@ -4,7 +4,7 @@ import { JobPostingsController } from './job-postings.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JobPosting } from './entities/job-posting.entity';
 
-import { Benefit } from './entities/benefit.entity';
+import { Benefit } from '../job-benefits/entities/benefit.entity';
 import { JwtModule } from '@nestjs/jwt';
 
 @Module({

@@ -18,9 +18,6 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { AdminGuard } from 'src/apis/auth/jwt/admin.guard';
-import { JwtAuthGuard } from 'src/apis/auth/jwt/jwt.guard';
-import { ReadAllJobCategoriesDto } from '../job-categories/dto/job-category-response.dto';
 
 @ApiTags('JobPostings API')
 @Controller('job-postings')

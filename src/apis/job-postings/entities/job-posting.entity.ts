@@ -8,8 +8,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { Company } from 'src/company/entities/company.entity';
-import { Benefit } from './benefit.entity';
+import { Company } from 'src/apis/company/entities/company.entity';
+import { Benefit } from '../../job-benefits/entities/benefit.entity';
 
 @Entity('job_postings')
 export class JobPosting {
@@ -54,8 +54,9 @@ export class JobPosting {
   //   @ManyToOne(() => JobPosting, (jobPosting) => jobPosting.benefits)
   //   jobPosting: JobPosting;
 
-  @OneToMany(() => Benefit, (benefits) => benefits.jobPosting)
-  benefits: Benefit[];
+  // @OneToMany(() => Benefit, (benefits) => benefits.jobPosting)
+  // benefits: Benefit[];
+
   @Column({ length: 255, nullable: true })
   workAddress?: string;
 

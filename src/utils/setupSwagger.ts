@@ -6,9 +6,14 @@ import { ConfigService } from '@nestjs/config';
 export const setupSwagger = (app: INestApplication): void => {
   const configService = app.get(ConfigService);
 
-  // 기본값을 설정하여 undefined가 아닌 값을 보장
-  const swaggerId = configService.get('SWAGGER_ID') || 'defaultUser';
-  const swaggerPw = configService.get('SWAGGER_PW') || 'defaultPassword';
+  const swaggerId = configService.get<string>('SWAGGER_ID');
+  const swaggerPw = configService.get<string>('SWAGGER_PW');
+  if (!swaggerId || !swaggerPw) {
+    throw new Error(
+      'SWAGGER_ID and SWAGGER_PW must be set in environment variables',
+    );
+  }
+
   app.use(
     ['/docs'],
     expressBasicAuth({
@@ -49,6 +54,4 @@ export const setupSwagger = (app: INestApplication): void => {
       persistAuthorization: true,
     },
   });
-
-  SwaggerModule.setup('docs', app, document);
 };

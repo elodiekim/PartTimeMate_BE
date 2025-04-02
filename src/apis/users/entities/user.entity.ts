@@ -10,7 +10,7 @@ import {
 
 import { IsDate, IsPhoneNumber } from 'class-validator';
 import { Exclude } from 'class-transformer';
-import { Company } from 'src/company/entities/company.entity';
+import { Company } from 'src/apis/company/entities/company.entity';
 
 @Entity('users')
 export class User {

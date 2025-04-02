@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 
 import { User } from 'src/apis/users/entities/user.entity';
-import { JobPosting } from 'src/job-postings/entities/job-posting.entity';
+import { JobPosting } from 'src/apis/job-postings/entities/job-posting.entity';
 
 @Entity('companies')
 export class Company {
