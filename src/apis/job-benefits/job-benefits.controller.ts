@@ -40,27 +40,60 @@ export class JobBenefitsController {
   async create(@Body() createJobBenefitDto: CreateJobBenefitDto) {
     return this.jobBenefitsService.create(createJobBenefitDto);
   }
-
+  // ─────────────────────────────────────────────────────────
+  // ✅ benefit 전체 조회 API
+  // ─────────────────────────────────────────────────────────
   @Get()
-  findAll() {
+  @ApiOperation({ summary: 'Get all job benefits' })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully retrieved all job benefits.',
+  })
+  async findAll() {
     return this.jobBenefitsService.findAll();
   }
-
+  // ─────────────────────────────────────────────────────────
+  // ✅ benefit 상세 조회 API
+  // ─────────────────────────────────────────────────────────
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.jobBenefitsService.findOne(+id);
+  @ApiOperation({ summary: 'Get a job benefit by ID' })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully retrieved a job benefit by ID.',
+  })
+  async findOne(@Param('id') id: number) {
+    return this.jobBenefitsService.findOne(id);
   }
+  // ─────────────────────────────────────────────────────────
+  // ✅ benefit 수정 API
+  // ─────────────────────────────────────────────────────────
 
   @Patch(':id')
-  update(
-    @Param('id') id: string,
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, BusinessGuard)
+  @ApiOperation({ summary: 'Update a job benefit' })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully updated a job benefit.',
+  })
+  async update(
+    @Param('id') id: number,
     @Body() updateJobBenefitDto: UpdateJobBenefitDto,
   ) {
-    return this.jobBenefitsService.update(+id, updateJobBenefitDto);
+    return this.jobBenefitsService.update(id, updateJobBenefitDto);
   }
-
+  // ─────────────────────────────────────────────────────────
+  // ✅ benefit 삭제 API
+  // ─────────────────────────────────────────────────────────
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.jobBenefitsService.remove(+id);
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, BusinessGuard)
+  @ApiOperation({ summary: 'Delete a job benefit' })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully deleted a job benefit.',
+  })
+  async remove(@Param('id') id: number) {
+    return this.jobBenefitsService.remove(id);
   }
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateJobBenefitDto } from './dto/create-job-benefit.dto';
 import { UpdateJobBenefitDto } from './dto/update-job-benefit.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -28,19 +28,67 @@ export class JobBenefitsService {
     };
   }
 
-  findAll() {
-    return `This action returns all jobBenefits`;
+  async findAll() {
+    const benefits = await this.benefitRepository.find({
+      order: { name: 'ASC' },
+    });
+    return {
+      message: 'Successfully retrieved all jobBenefits',
+      statusCode: 200,
+      data: { benefits },
+    };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} jobBenefit`;
+  async findBenefit(id: number) {
+    const benefit = await this.benefitRepository.findOne({
+      where: { id },
+    });
+
+    if (!benefit) {
+      throw new NotFoundException(`JobBenefit with ID ${id} not found.`);
+    }
+    return benefit;
+  }
+  async findOne(id: number) {
+    const benefit = await this.findBenefit(id);
+
+    return {
+      message: 'Successfully retrieved a job benefit',
+      statusCode: 200,
+      data: {
+        id: benefit.id,
+        name: benefit.name,
+        createdAt: benefit.createdAt,
+        updatedAt: benefit.updatedAt,
+      },
+    };
   }
 
-  update(id: number, updateJobBenefitDto: UpdateJobBenefitDto) {
-    return `This action updates a #${id} jobBenefit`;
+  async update(id: number, updateJobBenefitDto: UpdateJobBenefitDto) {
+    const benefit = await this.findBenefit(id);
+
+    await this.benefitRepository.update(id, updateJobBenefitDto);
+
+    return {
+      message: 'JobBenefit updated successfully',
+      statusCode: 200,
+      data: {
+        id: benefit.id,
+        name: benefit.name,
+        createdAt: benefit.createdAt,
+        updatedAt: benefit.updatedAt,
+      },
+    };
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} jobBenefit`;
+  async remove(id: number) {
+    const benefit = await this.findBenefit(id);
+
+    await this.benefitRepository.softRemove(benefit);
+
+    return {
+      message: 'JobBenefit successfully soft deleted',
+      statusCode: 200,
+    };
   }
 }
