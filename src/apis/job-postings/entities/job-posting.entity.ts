@@ -27,53 +27,89 @@ export class JobPosting {
   @ManyToOne(() => JobCategory, (jobCategory) => jobCategory.jobPostings)
   jobCategory: JobCategory;
 
-  @Column({ length: 50, nullable: true })
-  salary?: string;
+  // @Column({ length: 50, nullable: true })
+  // salary?: string;
 
-  @Column({ length: 20, nullable: true })
-  salaryType?: string;
+  // @Column({ length: 20, nullable: true })
+  // salaryType?: string;
+
+  // @Column({ default: false })
+  // salaryNegotiable: boolean;
+
+  // @Column({ length: '255', nullable: true })
+  // workPeriod?: string;
+
+  // @Column({ type: 'time', nullable: true })
+  // workHoursStart?: string;
+
+  // @Column({ type: 'time', nullable: true })
+  // workHoursEnd?: string;
+
+  // @Column({ type: 'simple-array', nullable: true })
+  // workDays?: string[];
+
+  // @Column({ length: 50, nullable: true })
+  // employmentType?: string;
+
+  // @Column({ length: 255, nullable: true })
+  // workAddress?: string;
+
+  // @Column({ length: 255, nullable: true })
+  // addressDetail?: string;
+
+  // @Column({ length: 50, nullable: true })
+  // locationCoords?: string;
+
+  // @Column({ type: 'text', nullable: true })
+  // description?: string;
+
+  // @Column({ length: 50, nullable: true })
+  // contactName?: string;
+
+  // @Column({ length: 50, nullable: true })
+  // contactPhone?: string;
+
+  // @Column({ length: 100, nullable: true })
+  // contactEmail?: string;
+
+  // @Column({ length: 100, nullable: true })
+  // applicationMethod?: string;
+  /**To Do위치 정보 카데고리 생성 -> locationCategory id, name, coordinates */
+  @Column({ length: 100, nullable: true })
+  location?: string;
+
+  @Column({ length: 100, nullable: true })
+  hourlyRate?: string;
 
   @Column({ default: false })
-  salaryNegotiable: boolean;
-
-  @Column({ length: '255', nullable: true })
-  workPeriod?: string;
-
-  @Column({ type: 'time', nullable: true })
-  workHoursStart?: string;
-
-  @Column({ type: 'time', nullable: true })
-  workHoursEnd?: string;
+  isHourlyRateNegotiable: boolean;
 
   @Column({ type: 'simple-array', nullable: true })
   workDays?: string[];
 
-  @Column({ length: 50, nullable: true })
-  employmentType?: string;
+  @Column({ length: 100, nullable: true })
+  workHoursStart?: string;
 
-  @Column({ length: 255, nullable: true })
-  workAddress?: string;
-
-  @Column({ length: 255, nullable: true })
-  addressDetail?: string;
-
-  @Column({ length: 50, nullable: true })
-  locationCoords?: string;
+  @Column({ length: 100, nullable: true })
+  workHoursEnd?: string;
 
   @Column({ type: 'text', nullable: true })
   description?: string;
 
-  @Column({ length: 50, nullable: true })
-  contactName?: string;
+  @Column({ length: '255', nullable: true })
+  workPeriod?: string;
 
-  @Column({ length: 50, nullable: true })
-  contactPhone?: string;
-
-  @Column({ length: 100, nullable: true })
-  contactEmail?: string;
+  @Column({ type: 'simple-array', nullable: true })
+  benefits?: string[];
 
   @Column({ length: 100, nullable: true })
   applicationMethod?: string;
+
+  @Column({ length: 100, nullable: true })
+  contact?: string;
+
+  @Column({ length: 100, nullable: true })
+  deadline?: string;
 
   @CreateDateColumn()
   createdAt: Date;

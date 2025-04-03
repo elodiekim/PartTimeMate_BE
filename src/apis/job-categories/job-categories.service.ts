@@ -48,7 +48,7 @@ export class JobCategoriesService {
 
     const newSubCategory = this.subCategoryRepository.create({
       name,
-      jobCategory,
+      jobCategoryId,
     });
 
     const savedCategory = await this.subCategoryRepository.save(newSubCategory);
@@ -59,7 +59,7 @@ export class JobCategoriesService {
       data: {
         id: savedCategory.id,
         name: savedCategory.name,
-        categoryId: savedCategory.jobCategory,
+        jobCategoryId: savedCategory.jobCategoryId,
         createdAt: savedCategory.createdAt,
         updatedAt: savedCategory.updatedAt,
       },
@@ -149,7 +149,7 @@ export class JobCategoriesService {
       data: {
         id: subCategory.id,
         name: subCategory.name,
-        jobCategoryId: subCategory.jobCategory.id,
+        jobCategoryId: subCategory.jobCategoryId,
         createdAt: subCategory.createdAt,
         updatedAt: subCategory.updatedAt,
       },
@@ -169,7 +169,7 @@ export class JobCategoriesService {
 
     // 해당 카테고리에 속한 모든 서브 카테고리 찾기
     const subCategories = await this.subCategoryRepository.find({
-      where: { jobCategory: { id } },
+      where: { jobCategoryId: id },
     });
     // 서브 카테고리들을 삭제
     if (subCategories.length > 0) {

@@ -22,8 +22,8 @@ export class JobCategory {
   @OneToMany(() => JobPosting, (jobPosting) => jobPosting.jobCategory)
   jobPostings: JobPosting[];
 
-  @OneToMany(() => SubCategory, (subCategory) => subCategory.jobCategory)
-  subCategories: SubCategory[];
+  // @OneToMany(() => SubCategory, (subCategory) => subCategory.jobCategory)
+  // subCategories: SubCategory[];
 
   @CreateDateColumn()
   createdAt: Date;
