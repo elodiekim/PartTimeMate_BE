@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { JobPostingsService } from './job-postings.service';
 import { CreateJobPostingDto } from './dto/create-job-posting.dto';
@@ -20,6 +21,8 @@ import {
 } from '@nestjs/swagger';
 import { BusinessGuard } from '../auth/jwt/business.guard';
 import { JwtAuthGuard } from '../auth/jwt/jwt.guard';
+import { PageRequestDto } from './dto/read-job-posting.dto';
+import { ReadAllJobPostingsDto } from './dto/read-job-posting.dto';
 
 @ApiTags('JobPostings API')
 @Controller('job-postings')
@@ -42,6 +45,21 @@ export class JobPostingsController {
     return this.jobPostingsService.create(createJobPostingDto);
   }
 
+  // ─────────────────────────────────────────────────────────
+  // ✅ jobPosting 목록 조회 API
+  // ─────────────────────────────────────────────────────────
+  @Get()
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get all job postings' })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully retrieved all job postings.',
+    type: ReadAllJobPostingsDto,
+  })
+  async findAll(@Query() pageRequestDto: PageRequestDto) {
+    return this.jobPostingsService.findAll(pageRequestDto);
+  }
   // ─────────────────────────────────────────────────────────
   // ✅ jobPosting 상세 조회 API
   // ─────────────────────────────────────────────────────────

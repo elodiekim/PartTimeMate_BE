@@ -7,6 +7,10 @@ import { Repository } from 'typeorm';
 import { CreateJobPostingDto } from './dto/create-job-posting.dto';
 import { JobCategory } from '../job-categories/entities/job-category.entity';
 import { Company } from '../company/entities/company.entity';
+import {
+  PageRequestDto,
+  ReadAllJobPostingsDto,
+} from './dto/read-job-posting.dto';
 
 @Injectable()
 export class JobPostingsService {
@@ -40,6 +44,33 @@ export class JobPostingsService {
       company,
     });
     return this.jobPostingRepository.save(jobPosting);
+  }
+
+  // ─────────────────────────────────────────────────────────
+  // ✅ jobPosting 목록 조회 API
+  // ─────────────────────────────────────────────────────────
+  async findAll(
+    pageRequestDto: PageRequestDto,
+  ): Promise<ReadAllJobPostingsDto> {
+    const { page = 1 } = pageRequestDto;
+    const limit = 20;
+    const [jobPostings, totalCount] =
+      await this.jobPostingRepository.findAndCount({
+        skip: (page - 1) * limit,
+        take: limit,
+      });
+    const totalPage = Math.ceil(totalCount / limit);
+    return {
+      statusCode: 200,
+      message: 'Job postings fetched successfully',
+      data: {
+        jobPostings,
+        totalCount,
+        totalPage,
+        page,
+        // limit,
+      },
+    };
   }
 
   findOne(id: number) {
