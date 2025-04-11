@@ -58,6 +58,7 @@ export class JobPostingsService {
       await this.jobPostingRepository.findAndCount({
         skip: (page - 1) * limit,
         take: limit,
+        relations: ['jobCategory', 'company'],
       });
     const totalPage = Math.ceil(totalCount / limit);
     return {
@@ -73,8 +74,19 @@ export class JobPostingsService {
     };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} jobPosting`;
+  async findOne(id: number) {
+    const jobPosting = await this.jobPostingRepository.findOne({
+      where: { id },
+      relations: ['jobCategory', 'company'],
+    });
+    if (!jobPosting) {
+      throw new NotFoundException('Job posting not found');
+    }
+    return {
+      statusCode: 200,
+      message: 'Job posting fetched successfully',
+      data: jobPosting,
+    };
   }
 
   update(id: number, updateJobPostingDto: UpdateJobPostingDto) {

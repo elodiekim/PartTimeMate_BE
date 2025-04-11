@@ -64,6 +64,13 @@ export class JobPostingsController {
   // ✅ jobPosting 상세 조회 API
   // ─────────────────────────────────────────────────────────
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get a job posting by ID' })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully retrieved the job posting.',
+  })
   async findOne(@Param('id') id: string) {
     return this.jobPostingsService.findOne(+id);
   }
