@@ -63,8 +63,6 @@ export class JobCategoriesController {
   // ✅ 카테고리 전체 조회 API
   // ─────────────────────────────────────────────────────────
   @Get()
-  @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Retrieve all job categories' })
   @ApiResponse({
     status: 200,
@@ -78,8 +76,6 @@ export class JobCategoriesController {
   // ✅ 카테고리별 서브카테고리 조회 API
   // ─────────────────────────────────────────────────────────
   @Get(':id/subcategories')
-  @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Retrieve subcategories by category ID' })
   @ApiResponse({
     status: 200,
