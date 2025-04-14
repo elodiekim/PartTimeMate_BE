@@ -9,9 +9,9 @@ import { UsersModule } from './apis/users/users.module';
 import { AuthModule } from './apis/auth/auth.module';
 import { JobPostingsModule } from './apis/job-postings/job-postings.module';
 import { CompanyModule } from './apis/company/company.module';
-import { AdminModule } from './admin/admin.module';
+import { AdminModule } from './apis/admin/admin.module';
 import { JobCategoriesModule } from './apis/job-categories/job-categories.module';
-
+import { LocationsModule } from './apis/locations/locations.module';
 import * as path from 'path';
 import { JobBenefitsModule } from './apis/job-benefits/job-benefits.module';
 @Module({
@@ -33,6 +33,7 @@ import { JobBenefitsModule } from './apis/job-benefits/job-benefits.module';
     AdminModule,
     JobCategoriesModule,
     JobBenefitsModule,
+    LocationsModule,
   ],
 
   controllers: [AppController],

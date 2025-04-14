@@ -83,40 +83,4 @@ export class JobPostingsController {
   remove(@Param('id') id: string) {
     return this.jobPostingsService.remove(+id);
   }
-  // ─────────────────────────────────────────────────────────
-  //  ✅ location 조회 API
-  // ─────────────────────────────────────────────────────────
-  @Get('location')
-  @ApiOperation({ summary: 'Get all location categories' })
-  @ApiResponse({
-    status: 200,
-    description: 'Successfully retrieved all location categories.',
-  })
-  async getLocationCategories() {
-    return this.jobPostingsService.getLocationCategories();
-  }
-  // ─────────────────────────────────────────────────────────
-  //  ✅ sub location 조회 API
-  // ─────────────────────────────────────────────────────────
-  @Get('sub-location/:id')
-  @ApiOperation({ summary: 'Get all sub location categories' })
-  @ApiResponse({
-    status: 200,
-    description: 'Successfully retrieved all sub location categories.',
-  })
-  async getLocationSubCategories(@Param('id') id: number) {
-    return this.jobPostingsService.getLocationSubCategories(id);
-  }
-  // ─────────────────────────────────────────────────────────
-  //  ✅ detail location 조회 API
-  // ─────────────────────────────────────────────────────────
-  @Get('detail-location/:id')
-  @ApiOperation({ summary: 'Get location detail' })
-  @ApiResponse({
-    status: 200,
-    description: 'Successfully retrieved location detail.',
-  })
-  async getLocationDetail(@Param('id') id: number) {
-    return this.jobPostingsService.getLocationDetail(id);
-  }
 }

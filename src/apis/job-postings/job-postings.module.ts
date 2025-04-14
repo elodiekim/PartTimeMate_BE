@@ -14,9 +14,6 @@ import { PreferredLanguage } from './entities/preferred-language.entity';
 import { WorkDay } from './entities/work-day.entity';
 import { WorkHour } from './entities/work-hour.entity';
 import { WorkPeriod } from './entities/work-period.entity';
-import { LocationDetail } from './entities/location-detail.entity';
-import { LocationSubCategory } from './entities/location-sub-category.entity';
-import { LocationCategory } from './entities/location-category.entity';
 
 @Module({
   imports: [
@@ -31,9 +28,6 @@ import { LocationCategory } from './entities/location-category.entity';
       WorkDay,
       WorkHour,
       WorkPeriod,
-      LocationCategory,
-      LocationSubCategory,
-      LocationDetail,
     ]),
     JwtModule,
   ],
