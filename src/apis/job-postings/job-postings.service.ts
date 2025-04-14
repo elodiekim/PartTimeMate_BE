@@ -14,6 +14,9 @@ import {
 import { WorkDay } from './entities/work-day.entity';
 import { WorkHour } from './entities/work-hour.entity';
 import { WorkPeriod } from './entities/work-period.entity';
+import { PreferredLanguage } from './entities/preferred-language.entity';
+import { EmploymentType } from './entities/employment-type.entity';
+import { AdditionalOption } from './entities/additional-option.entity';
 @Injectable()
 export class JobPostingsService {
   constructor(
@@ -29,6 +32,12 @@ export class JobPostingsService {
     private readonly workHourRepository: Repository<WorkHour>,
     @InjectRepository(WorkPeriod)
     private readonly workPeriodRepository: Repository<WorkPeriod>,
+    @InjectRepository(PreferredLanguage)
+    private readonly preferredLanguageRepository: Repository<PreferredLanguage>,
+    @InjectRepository(EmploymentType)
+    private readonly employmentTypeRepository: Repository<EmploymentType>,
+    @InjectRepository(AdditionalOption)
+    private readonly additionalOptionRepository: Repository<AdditionalOption>,
   ) {}
   async create(createJobPostingDto: CreateJobPostingDto) {
     const { companyId, jobCategoryId, ...jobPostingData } = createJobPostingDto;
@@ -126,6 +135,30 @@ export class JobPostingsService {
       statusCode: 200,
       message: 'Work period fetched successfully',
       data: workPeriod,
+    };
+  }
+  async getPreferredLanguages() {
+    const preferredLanguages = await this.preferredLanguageRepository.find();
+    return {
+      statusCode: 200,
+      message: 'Preferred languages fetched successfully',
+      data: preferredLanguages,
+    };
+  }
+  async getEmploymentTypes() {
+    const employmentTypes = await this.employmentTypeRepository.find();
+    return {
+      statusCode: 200,
+      message: 'Employment types fetched successfully',
+      data: employmentTypes,
+    };
+  }
+  async getAdditionalOptions() {
+    const additionalOptions = await this.additionalOptionRepository.find();
+    return {
+      statusCode: 200,
+      message: 'Additional options fetched successfully',
+      data: additionalOptions,
     };
   }
 }

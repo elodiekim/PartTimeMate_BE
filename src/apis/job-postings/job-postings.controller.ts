@@ -120,4 +120,41 @@ export class JobPostingsController {
   async getWorkPeriod() {
     return this.jobPostingsService.getWorkPeriod();
   }
+
+  // ─────────────────────────────────────────────────────────
+  //  ✅ preferred-language 조회 API
+  // ─────────────────────────────────────────────────────────
+  @Get('preferred-language')
+  @ApiOperation({ summary: 'Get all preferred languages' })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully retrieved all preferred languages.',
+  })
+  async getPreferredLanguages() {
+    return this.jobPostingsService.getPreferredLanguages();
+  }
+  // ─────────────────────────────────────────────────────────
+  //  ✅ employment-type 조회 API
+  // ─────────────────────────────────────────────────────────
+  @Get('employment-type')
+  @ApiOperation({ summary: 'Get all employment types' })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully retrieved all employment types.',
+  })
+  async getEmploymentTypes() {
+    return this.jobPostingsService.getEmploymentTypes();
+  }
+  // ─────────────────────────────────────────────────────────
+  //  ✅ additional-option 조회 API
+  // ─────────────────────────────────────────────────────────
+  @Get('additional-option')
+  @ApiOperation({ summary: 'Get all additional options' })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully retrieved all additional options.',
+  })
+  async getAdditionalOptions() {
+    return this.jobPostingsService.getAdditionalOptions();
+  }
 }
