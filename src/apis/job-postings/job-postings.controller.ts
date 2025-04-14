@@ -49,8 +49,6 @@ export class JobPostingsController {
   // ✅ jobPosting 목록 조회 API
   // ─────────────────────────────────────────────────────────
   @Get()
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @ApiOperation({ summary: 'Get all job postings' })
   @ApiResponse({
     status: 200,
@@ -63,9 +61,7 @@ export class JobPostingsController {
   // ─────────────────────────────────────────────────────────
   // ✅ jobPosting 상세 조회 API
   // ─────────────────────────────────────────────────────────
-  @Get(':id')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
+  @Get('detail/:id')
   @ApiOperation({ summary: 'Get a job posting by ID' })
   @ApiResponse({
     status: 200,
@@ -86,5 +82,41 @@ export class JobPostingsController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.jobPostingsService.remove(+id);
+  }
+  // ─────────────────────────────────────────────────────────
+  //  ✅ location 조회 API
+  // ─────────────────────────────────────────────────────────
+  @Get('location')
+  @ApiOperation({ summary: 'Get all location categories' })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully retrieved all location categories.',
+  })
+  async getLocationCategories() {
+    return this.jobPostingsService.getLocationCategories();
+  }
+  // ─────────────────────────────────────────────────────────
+  //  ✅ sub location 조회 API
+  // ─────────────────────────────────────────────────────────
+  @Get('sub-location/:id')
+  @ApiOperation({ summary: 'Get all sub location categories' })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully retrieved all sub location categories.',
+  })
+  async getLocationSubCategories(@Param('id') id: number) {
+    return this.jobPostingsService.getLocationSubCategories(id);
+  }
+  // ─────────────────────────────────────────────────────────
+  //  ✅ detail location 조회 API
+  // ─────────────────────────────────────────────────────────
+  @Get('detail-location/:id')
+  @ApiOperation({ summary: 'Get location detail' })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully retrieved location detail.',
+  })
+  async getLocationDetail(@Param('id') id: number) {
+    return this.jobPostingsService.getLocationDetail(id);
   }
 }
