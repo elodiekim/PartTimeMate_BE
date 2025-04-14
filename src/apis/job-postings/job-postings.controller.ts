@@ -83,4 +83,41 @@ export class JobPostingsController {
   remove(@Param('id') id: string) {
     return this.jobPostingsService.remove(+id);
   }
+
+  // ─────────────────────────────────────────────────────────
+  //  ✅ work-day 조회 API
+  // ─────────────────────────────────────────────────────────
+  @Get('work-day')
+  @ApiOperation({ summary: 'Get all work days' })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully retrieved all work days.',
+  })
+  async getWorkDays() {
+    return this.jobPostingsService.getWorkDays();
+  }
+  // ─────────────────────────────────────────────────────────
+  //  ✅ work-hour 조회 API
+  // ─────────────────────────────────────────────────────────
+  @Get('work-hour')
+  @ApiOperation({ summary: 'Get all work hours' })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully retrieved all work hours.',
+  })
+  async getWorkHours() {
+    return this.jobPostingsService.getWorkHours();
+  }
+  // ─────────────────────────────────────────────────────────
+  //  ✅ work-period 조회 API
+  // ─────────────────────────────────────────────────────────
+  @Get('work-period')
+  @ApiOperation({ summary: 'Get all work periods' })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully retrieved all work periods.',
+  })
+  async getWorkPeriod() {
+    return this.jobPostingsService.getWorkPeriod();
+  }
 }

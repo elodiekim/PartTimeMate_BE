@@ -11,7 +11,9 @@ import {
   PageRequestDto,
   ReadAllJobPostingsDto,
 } from './dto/read-job-posting.dto';
-
+import { WorkDay } from './entities/work-day.entity';
+import { WorkHour } from './entities/work-hour.entity';
+import { WorkPeriod } from './entities/work-period.entity';
 @Injectable()
 export class JobPostingsService {
   constructor(
@@ -21,6 +23,12 @@ export class JobPostingsService {
     private readonly jobCategoryRepository: Repository<JobCategory>,
     @InjectRepository(Company)
     private readonly companyRepository: Repository<Company>,
+    @InjectRepository(WorkDay)
+    private readonly workDayRepository: Repository<WorkDay>,
+    @InjectRepository(WorkHour)
+    private readonly workHourRepository: Repository<WorkHour>,
+    @InjectRepository(WorkPeriod)
+    private readonly workPeriodRepository: Repository<WorkPeriod>,
   ) {}
   async create(createJobPostingDto: CreateJobPostingDto) {
     const { companyId, jobCategoryId, ...jobPostingData } = createJobPostingDto;
@@ -96,6 +104,28 @@ export class JobPostingsService {
   remove(id: number) {
     return `This action removes a #${id} jobPosting`;
   }
-
-  async getWorkPeriod() {}
+  async getWorkDays() {
+    const workDays = await this.workDayRepository.find();
+    return {
+      statusCode: 200,
+      message: 'Work days fetched successfully',
+      data: workDays,
+    };
+  }
+  async getWorkHours() {
+    const workHours = await this.workHourRepository.find();
+    return {
+      statusCode: 200,
+      message: 'Work hours fetched successfully',
+      data: workHours,
+    };
+  }
+  async getWorkPeriod() {
+    const workPeriod = await this.workPeriodRepository.find();
+    return {
+      statusCode: 200,
+      message: 'Work period fetched successfully',
+      data: workPeriod,
+    };
+  }
 }
