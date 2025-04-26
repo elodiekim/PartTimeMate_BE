@@ -121,15 +121,31 @@ export class JobPostingsService {
       ...(location ? { locationCategory: location } : {}),
       ...(locationSubCategory ? { locationSubCategory } : {}),
       ...(locationDetail ? { locationDetail } : {}),
-      additionalOptionIds:
-        additionalOptionIds?.map(Number).sort((a, b) => a - b) ?? [],
-      employmentTypeIds:
-        employmentTypeIds?.map(Number).sort((a, b) => a - b) ?? [],
-      preferredLanguageIds:
-        preferredLanguageIds?.map(Number).sort((a, b) => a - b) ?? [],
-      workDayIds: workDayIds?.map(Number).sort((a, b) => a - b) ?? [],
-      workHourIds: workHourIds?.map(Number).sort((a, b) => a - b) ?? [],
-      workPeriodIds: workPeriodIds?.map(Number).sort((a, b) => a - b) ?? [],
+      additionalOptionIds: additionalOptionIds
+        ? Array.from(new Set(additionalOptionIds.map(Number))).sort(
+            (a, b) => a - b,
+          )
+        : [],
+      employmentTypeIds: employmentTypeIds
+        ? Array.from(new Set(employmentTypeIds.map(Number))).sort(
+            (a, b) => a - b,
+          )
+        : [],
+      preferredLanguageIds: preferredLanguageIds
+        ? Array.from(new Set(preferredLanguageIds.map(Number))).sort(
+            (a, b) => a - b,
+          )
+        : [],
+      workDayIds: workDayIds
+        ? Array.from(new Set(workDayIds.map(Number))).sort((a, b) => a - b)
+        : [],
+      workHourIds: workHourIds
+        ? Array.from(new Set(workHourIds.map(Number))).sort((a, b) => a - b)
+        : [],
+
+      workPeriodIds: workPeriodIds
+        ? Array.from(new Set(workPeriodIds.map(Number))).sort((a, b) => a - b)
+        : [],
     });
 
     return this.jobPostingRepository.save(jobPosting);
