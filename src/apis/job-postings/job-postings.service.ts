@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { In } from 'typeorm';
 
 import { UpdateJobPostingDto } from './dto/update-job-posting.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -17,6 +18,11 @@ import { WorkPeriod } from './entities/work-period.entity';
 import { PreferredLanguage } from './entities/preferred-language.entity';
 import { EmploymentType } from './entities/employment-type.entity';
 import { AdditionalOption } from './entities/additional-option.entity';
+import { LocationCategory } from '../locations/entities/location-category.entity';
+import { IsArray, IsOptional } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { LocationSubCategory } from '../locations/entities/location-sub-category.entity';
+import { LocationDetail } from '../locations/entities/location-detail.entity';
 @Injectable()
 export class JobPostingsService {
   constructor(
@@ -38,28 +44,94 @@ export class JobPostingsService {
     private readonly employmentTypeRepository: Repository<EmploymentType>,
     @InjectRepository(AdditionalOption)
     private readonly additionalOptionRepository: Repository<AdditionalOption>,
+    @InjectRepository(LocationCategory)
+    private readonly locationCategoryRepository: Repository<LocationCategory>,
+    @InjectRepository(LocationSubCategory)
+    private readonly locationSubCategoryRepository: Repository<LocationSubCategory>,
+    @InjectRepository(LocationDetail)
+    private readonly locationDetailRepository: Repository<LocationDetail>,
   ) {}
   async create(createJobPostingDto: CreateJobPostingDto) {
-    const { companyId, jobCategoryId, ...jobPostingData } = createJobPostingDto;
+    const {
+      companyId,
+      jobCategoryId,
+      locationId,
+      locationSubCategoryId,
+      locationDetailId,
+      additionalOptionIds,
+      employmentTypeIds,
+      preferredLanguageIds,
+      workDayIds,
+      workHourIds,
+      workPeriodIds,
+      title,
+      hourlyRate,
+      isHourlyRateNegotiable,
+      description,
+      benefits,
+      applicationMethod,
+      contact,
+      deadline,
+    } = createJobPostingDto;
+
     const jobCategory = await this.jobCategoryRepository.findOne({
       where: { id: jobCategoryId },
     });
-    // console.log(jobCategory);
+
     const company = await this.companyRepository.findOne({
       where: { id: companyId },
     });
-    // console.log(company);
+
     if (!jobCategory) {
       throw new NotFoundException('Job category not found');
     }
     if (!company) {
       throw new NotFoundException('Company not found');
     }
+
+    const location = locationId
+      ? await this.locationCategoryRepository.findOne({
+          where: { id: locationId },
+        })
+      : undefined;
+
+    const locationSubCategory = locationSubCategoryId
+      ? await this.locationSubCategoryRepository.findOne({
+          where: { id: locationSubCategoryId },
+        })
+      : undefined;
+
+    const locationDetail = locationDetailId
+      ? await this.locationDetailRepository.findOne({
+          where: { id: locationDetailId },
+        })
+      : undefined;
+
     const jobPosting = this.jobPostingRepository.create({
-      ...jobPostingData,
+      title,
+      hourlyRate,
+      isHourlyRateNegotiable,
+      description,
+      benefits,
+      applicationMethod,
+      contact,
+      deadline,
       jobCategory,
       company,
+      ...(location ? { locationCategory: location } : {}),
+      ...(locationSubCategory ? { locationSubCategory } : {}),
+      ...(locationDetail ? { locationDetail } : {}),
+      additionalOptionIds:
+        additionalOptionIds?.map(Number).sort((a, b) => a - b) ?? [],
+      employmentTypeIds:
+        employmentTypeIds?.map(Number).sort((a, b) => a - b) ?? [],
+      preferredLanguageIds:
+        preferredLanguageIds?.map(Number).sort((a, b) => a - b) ?? [],
+      workDayIds: workDayIds?.map(Number).sort((a, b) => a - b) ?? [],
+      workHourIds: workHourIds?.map(Number).sort((a, b) => a - b) ?? [],
+      workPeriodIds: workPeriodIds?.map(Number).sort((a, b) => a - b) ?? [],
     });
+
     return this.jobPostingRepository.save(jobPosting);
   }
 
@@ -90,19 +162,84 @@ export class JobPostingsService {
       },
     };
   }
-
+  private async getNamesByIds<T extends { id: number | string; name: string }>(
+    repo: Repository<T>,
+    ids?: (number | string)[],
+  ): Promise<string[]> {
+    if (!ids || !ids.length) return [];
+    const entities = await repo.find({
+      where: { id: In(ids.map(Number)) } as any,
+    });
+    return entities.map((e) => e.name);
+  }
   async findOne(id: number) {
     const jobPosting = await this.jobPostingRepository.findOne({
       where: { id },
-      relations: ['jobCategory', 'company'],
+      relations: [
+        'jobCategory',
+        'company',
+        'locationCategory',
+        'locationSubCategory',
+        'locationDetail',
+      ],
     });
     if (!jobPosting) {
       throw new NotFoundException('Job posting not found');
     }
+
+    // id 배열을 name 배열로 변환 (헬퍼 함수 활용)
+    const additionalOptionNames = await this.getNamesByIds(
+      this.additionalOptionRepository,
+      jobPosting.additionalOptionIds,
+    );
+    const employmentTypeNames = await this.getNamesByIds(
+      this.employmentTypeRepository,
+      jobPosting.employmentTypeIds,
+    );
+    const preferredLanguageNames = await this.getNamesByIds(
+      this.preferredLanguageRepository,
+      jobPosting.preferredLanguageIds,
+    );
+    const workDayNames = await this.getNamesByIds(
+      this.workDayRepository,
+      jobPosting.workDayIds,
+    );
+    const workHourNames = await this.getNamesByIds(
+      this.workHourRepository,
+      jobPosting.workHourIds,
+    );
+    const workPeriodNames = await this.getNamesByIds(
+      this.workPeriodRepository,
+      jobPosting.workPeriodIds,
+    );
+
     return {
       statusCode: 200,
       message: 'Job posting fetched successfully',
-      data: jobPosting,
+      data: {
+        id: jobPosting.id,
+        title: jobPosting.title,
+        hourlyRate: jobPosting.hourlyRate,
+        isHourlyRateNegotiable: jobPosting.isHourlyRateNegotiable,
+        description: jobPosting.description,
+        benefits: jobPosting.benefits,
+        applicationMethod: jobPosting.applicationMethod,
+        contact: jobPosting.contact,
+        deadline: jobPosting.deadline,
+        createdAt: jobPosting.createdAt,
+        updatedAt: jobPosting.updatedAt,
+        jobCategory: jobPosting.jobCategory,
+        company: jobPosting.company,
+        locationCategory: jobPosting.locationCategory,
+        locationSubCategory: jobPosting.locationSubCategory,
+        locationDetail: jobPosting.locationDetail,
+        additionalOptionNames,
+        employmentTypeNames,
+        preferredLanguageNames,
+        workDayNames,
+        workHourNames,
+        workPeriodNames,
+      },
     };
   }
 

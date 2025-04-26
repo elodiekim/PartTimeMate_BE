@@ -2,6 +2,8 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
   OneToMany,
   OneToOne,
@@ -12,6 +14,15 @@ import {
 import { Company } from 'src/apis/company/entities/company.entity';
 import { Benefit } from '../../job-benefits/entities/benefit.entity';
 import { JobCategory } from 'src/apis/job-categories/entities/job-category.entity';
+import { LocationCategory } from 'src/apis/locations/entities/location-category.entity';
+import { WorkPeriod } from './work-period.entity';
+import { WorkHour } from './work-hour.entity';
+import { WorkDay } from './work-day.entity';
+import { PreferredLanguage } from './preferred-language.entity';
+import { EmploymentType } from './employment-type.entity';
+import { AdditionalOption } from './additional-option.entity';
+import { LocationSubCategory } from 'src/apis/locations/entities/location-sub-category.entity';
+import { LocationDetail } from 'src/apis/locations/entities/location-detail.entity';
 
 @Entity('job_postings')
 export class JobPosting {
@@ -27,56 +38,17 @@ export class JobPosting {
   @ManyToOne(() => JobCategory, (jobCategory) => jobCategory.jobPostings)
   jobCategory: JobCategory;
 
-  // @Column({ length: 50, nullable: true })
-  // salary?: string;
+  @ManyToOne(
+    () => LocationCategory,
+    (locationCategory) => locationCategory.jobPostings,
+  )
+  locationCategory: LocationCategory;
 
-  // @Column({ length: 20, nullable: true })
-  // salaryType?: string;
+  @ManyToOne(() => LocationSubCategory, { nullable: true })
+  locationSubCategory?: LocationSubCategory;
 
-  // @Column({ default: false })
-  // salaryNegotiable: boolean;
-
-  // @Column({ length: '255', nullable: true })
-  // workPeriod?: string;
-
-  // @Column({ type: 'time', nullable: true })
-  // workHoursStart?: string;
-
-  // @Column({ type: 'time', nullable: true })
-  // workHoursEnd?: string;
-
-  // @Column({ type: 'simple-array', nullable: true })
-  // workDays?: string[];
-
-  // @Column({ length: 50, nullable: true })
-  // employmentType?: string;
-
-  // @Column({ length: 255, nullable: true })
-  // workAddress?: string;
-
-  // @Column({ length: 255, nullable: true })
-  // addressDetail?: string;
-
-  // @Column({ length: 50, nullable: true })
-  // locationCoords?: string;
-
-  // @Column({ type: 'text', nullable: true })
-  // description?: string;
-
-  // @Column({ length: 50, nullable: true })
-  // contactName?: string;
-
-  // @Column({ length: 50, nullable: true })
-  // contactPhone?: string;
-
-  // @Column({ length: 100, nullable: true })
-  // contactEmail?: string;
-
-  // @Column({ length: 100, nullable: true })
-  // applicationMethod?: string;
-  /**To Do위치 정보 카데고리 생성 -> locationCategory id, name, coordinates */
-  @Column({ length: 100, nullable: true })
-  location?: string;
+  @ManyToOne(() => LocationDetail, { nullable: true })
+  locationDetail?: LocationDetail;
 
   @Column({ length: 100, nullable: true })
   hourlyRate?: string;
@@ -84,20 +56,8 @@ export class JobPosting {
   @Column({ default: false })
   isHourlyRateNegotiable: boolean;
 
-  @Column({ type: 'simple-array', nullable: true })
-  workDays?: string[];
-
-  @Column({ length: 100, nullable: true })
-  workHoursStart?: string;
-
-  @Column({ length: 100, nullable: true })
-  workHoursEnd?: string;
-
   @Column({ type: 'text', nullable: true })
   description?: string;
-
-  @Column({ length: '255', nullable: true })
-  workPeriod?: string;
 
   @Column({ type: 'simple-array', nullable: true })
   benefits?: string[];
@@ -110,6 +70,47 @@ export class JobPosting {
 
   @Column({ length: 100, nullable: true })
   deadline?: string;
+
+  // @ManyToMany(() => AdditionalOption)
+  // @JoinTable()
+  // additionalOptions: AdditionalOption[];
+
+  // @ManyToMany(() => EmploymentType)
+  // @JoinTable()
+  // employmentTypes: EmploymentType[];
+
+  // @ManyToMany(() => PreferredLanguage)
+  // @JoinTable()
+  // preferredLanguages: PreferredLanguage[];
+
+  // @ManyToMany(() => WorkDay)
+  // @JoinTable()
+  // workDays: WorkDay[];
+
+  // @ManyToMany(() => WorkHour)
+  // @JoinTable()
+  // workHours: WorkHour[];
+
+  // @ManyToMany(() => WorkPeriod)
+  // @JoinTable()
+  // workPeriods: WorkPeriod;
+  @Column('simple-array', { nullable: true })
+  additionalOptionIds?: number[];
+
+  @Column('simple-array', { nullable: true })
+  employmentTypeIds?: number[]; // 예: [1,2]
+
+  @Column('simple-array', { nullable: true })
+  preferredLanguageIds?: number[]; // 예: [1,2]
+
+  @Column('simple-array', { nullable: true })
+  workDayIds?: number[]; // 예: [1,2]
+
+  @Column('simple-array', { nullable: true })
+  workHourIds?: number[]; // 예: [1,2]
+
+  @Column('simple-array', { nullable: true })
+  workPeriodIds?: number[]; // 예: [1,2]
 
   @CreateDateColumn()
   createdAt: Date;

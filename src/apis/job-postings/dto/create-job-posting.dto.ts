@@ -1,5 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsBoolean, IsNumber, IsString } from 'class-validator';
+import {
+  IsArray,
+  IsBoolean,
+  isNumber,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class CreateJobPostingDto {
   @IsString()
@@ -23,12 +30,12 @@ export class CreateJobPostingDto {
   })
   companyId: number;
 
-  @IsString()
+  @IsNumber()
   @ApiProperty({
-    example: 'Sydney',
-    description: 'job location',
+    example: 1,
+    description: 'job location Id',
   })
-  location: string;
+  locationId: number;
 
   @IsString()
   @ApiProperty({
@@ -44,27 +51,6 @@ export class CreateJobPostingDto {
   })
   isHourlyRateNegotiable: boolean;
 
-  @IsArray()
-  @ApiProperty({
-    example: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-    description: 'job work days',
-  })
-  workDays: string[];
-
-  @IsString()
-  @ApiProperty({
-    example: '09:00',
-    description: 'job work hours start',
-  })
-  workHoursStart: string;
-
-  @IsString()
-  @ApiProperty({
-    example: '18:00',
-    description: 'job work hours end',
-  })
-  workHoursEnd: string;
-
   @IsString()
   @ApiProperty({
     example:
@@ -72,13 +58,6 @@ export class CreateJobPostingDto {
     description: 'job description',
   })
   description: string;
-
-  @IsString()
-  @ApiProperty({
-    example: '6 months',
-    description: 'job work period',
-  })
-  workPeriod: string;
 
   /**category 생성 후 변경 예정 */
   @IsArray()
@@ -109,116 +88,77 @@ export class CreateJobPostingDto {
   })
   deadline: string;
 
-  //   @IsString()
-  //   @ApiProperty({
-  //     example: '$40',
-  //     description: 'job salary',
-  //   })
-  //   salary: string;
+  // 추가: 각 relation의 id 배열
 
-  //   @IsString()
-  //   @ApiProperty({
-  //     example: 'hourly',
-  //     description: 'job salary type',
-  //   })
-  //   salaryType: string;
+  @IsArray()
+  @IsOptional()
+  @ApiProperty({
+    example: [1, 2],
+    description: 'additional option ids',
+    required: false,
+  })
+  additionalOptionIds?: number[];
 
-  //   @IsBoolean()
-  //   @ApiProperty({
-  //     example: true,
-  //     description: 'job salary negotiable',
-  //   })
-  //   salaryNegotiable: boolean;
+  @IsArray()
+  @IsOptional()
+  @ApiProperty({
+    example: [1, 2],
+    description: 'employment type ids',
+    required: false,
+  })
+  employmentTypeIds?: number[];
 
-  //   @IsString()
-  //   @ApiProperty({
-  //     example: '6 months',
-  //     description: 'job work period',
-  //   })
-  //   workPeriod: string;
+  @IsArray()
+  @IsOptional()
+  @ApiProperty({
+    example: [1, 2],
+    description: 'preferred language ids',
+    required: false,
+  })
+  preferredLanguageIds?: number[];
 
-  //   @IsString()
-  //   @ApiProperty({
-  //     example: '09:00',
-  //     description: 'job work hours start',
-  //   })
-  //   workHoursStart: string;
+  @IsArray()
+  @IsOptional()
+  @ApiProperty({
+    example: [1, 2],
+    description: 'work day ids',
+    required: false,
+  })
+  workDayIds?: number[];
 
-  //   @IsString()
-  //   @ApiProperty({
-  //     example: '18:00',
-  //     description: 'job work hours end',
-  //   })
-  //   workHoursEnd: string;
+  @IsArray()
+  @IsOptional()
+  @ApiProperty({
+    example: [1, 2],
+    description: 'work hour ids',
+    required: false,
+  })
+  workHourIds?: number[];
 
-  //   @IsArray()
-  //   @ApiProperty({
-  //     example: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-  //     description: 'job work days',
-  //   })
-  //   workDays: string[];
+  @IsArray()
+  @IsOptional()
+  @ApiProperty({
+    example: [1, 2],
+    description: 'work period ids',
+    required: false,
+  })
+  workPeriodIds?: number[];
 
-  //   @IsString()
-  //   @ApiProperty({
-  //     example: 'Part-time',
-  //     description: 'job employment type',
-  //   })
-  //   employmentType: string;
+  @IsNumber()
+  @IsOptional()
+  @ApiProperty({
+    example: 1,
+    description: 'location sub category id',
+    required: false,
+  })
+  locationSubCategoryId?: number;
 
-  //   @IsString()
-  //   @ApiProperty({
-  //     example: '123 Main St, Anytown, Sydney',
-  //     description: 'job work address',
-  //   })
-  //   workAddress: string;
-
-  //   @IsString()
-  //   @ApiProperty({
-  //     example: 'Sydney',
-  //     description: 'job address detail',
-  //   })
-  //   addressDetail: string;
-
-  //   @IsString()
-  //   @ApiProperty({
-  //     example: '-33.8688, 151.2153',
-  //     description: 'job location coords',
-  //   })
-  //   locationCoords: string;
-
-  //   @IsString()
-  //   @ApiProperty({
-  //     example:
-  //       'We are looking for a software engineer with 3 years of experience in React and Node.js.',
-  //     description: 'job description',
-  //   })
-  //   description: string;
-
-  //   @IsString()
-  //   @ApiProperty({
-  //     example: 'John Doe',
-  //     description: 'job contact name',
-  //   })
-  //   contactName: string;
-
-  //   @IsString()
-  //   @ApiProperty({
-  //     example: '+611012345678',
-  //     description: 'job contact phone',
-  //   })
-  //   contactPhone: string;
-
-  //   @IsString()
-  //   @ApiProperty({
-  //     example: 'john.doe@example.com',
-  //     description: 'job contact email',
-  //   })
-  //   contactEmail: string;
-
-  //   @IsString()
-  //   @ApiProperty({
-  //     example: 'Email',
-  //     description: 'job application method',
-  //   })
-  //   applicationMethod: string;
+  @IsNumber()
+  @IsOptional()
+  @ApiProperty({
+    example: 1,
+    description: 'location detail id',
+    required: false,
+  })
+  locationDetailId?: number;
 }
