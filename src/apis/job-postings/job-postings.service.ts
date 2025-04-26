@@ -121,31 +121,12 @@ export class JobPostingsService {
       ...(location ? { locationCategory: location } : {}),
       ...(locationSubCategory ? { locationSubCategory } : {}),
       ...(locationDetail ? { locationDetail } : {}),
-      additionalOptionIds: additionalOptionIds
-        ? Array.from(new Set(additionalOptionIds.map(Number))).sort(
-            (a, b) => a - b,
-          )
-        : [],
-      employmentTypeIds: employmentTypeIds
-        ? Array.from(new Set(employmentTypeIds.map(Number))).sort(
-            (a, b) => a - b,
-          )
-        : [],
-      preferredLanguageIds: preferredLanguageIds
-        ? Array.from(new Set(preferredLanguageIds.map(Number))).sort(
-            (a, b) => a - b,
-          )
-        : [],
-      workDayIds: workDayIds
-        ? Array.from(new Set(workDayIds.map(Number))).sort((a, b) => a - b)
-        : [],
-      workHourIds: workHourIds
-        ? Array.from(new Set(workHourIds.map(Number))).sort((a, b) => a - b)
-        : [],
-
-      workPeriodIds: workPeriodIds
-        ? Array.from(new Set(workPeriodIds.map(Number))).sort((a, b) => a - b)
-        : [],
+      additionalOptionIds: dedupeAndSort(additionalOptionIds),
+      employmentTypeIds: dedupeAndSort(employmentTypeIds),
+      preferredLanguageIds: dedupeAndSort(preferredLanguageIds),
+      workDayIds: dedupeAndSort(workDayIds),
+      workHourIds: dedupeAndSort(workHourIds),
+      workPeriodIds: dedupeAndSort(workPeriodIds),
     });
 
     return this.jobPostingRepository.save(jobPosting);
@@ -314,4 +295,8 @@ export class JobPostingsService {
       data: additionalOptions,
     };
   }
+}
+
+function dedupeAndSort(arr?: (number | string)[]): number[] {
+  return arr ? Array.from(new Set(arr.map(Number))).sort((a, b) => a - b) : [];
 }
