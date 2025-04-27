@@ -18,8 +18,8 @@ export class SubCategory {
   @Column({ length: 100 })
   name: string;
 
-  // @ManyToOne(() => JobCategory, (jobCategory) => jobCategory.subCategories)
-  // jobCategory: JobCategory;
+  @ManyToOne(() => JobCategory, (jobCategory) => jobCategory.subCategories)
+  jobCategory: JobCategory;
   @Column()
   jobCategoryId: number;
 
